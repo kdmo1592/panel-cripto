@@ -79,6 +79,11 @@ def num(x):
         return None
 
 
+def miles(x):
+    """Número entero con punto de millar, formato español."""
+    return f"{x:,.0f}".replace(",", ".")
+
+
 def iso(ms):
     return datetime.fromtimestamp(ms / 1000, tz=timezone.utc).date().isoformat()
 
@@ -410,7 +415,7 @@ def main():
         elif cierre_sem < mm200:
             senales.append({"tipo": "aviso", "texto": "Cierre semanal por debajo de la media de 200 semanas. Si la próxima semana cierra por encima, se activa el tramo 4."})
     if cierre_sem and cierre_sem > plan["btc"]["invalidacion_arriba"]:
-        senales.append({"tipo": "aviso", "texto": f"Cierre semanal por encima de {plan['btc']['invalidacion_arriba']:,} $: el escenario de caída queda invalidado. Revisa el plan (sección 'Cuándo el plan queda invalidado').".replace(",", ".")})
+        senales.append({"tipo": "aviso", "texto": f"Cierre semanal por encima de {miles(plan['btc']['invalidacion_arriba'])} $: el escenario de caída queda invalidado. Revisa el plan (sección 'Cuándo el plan queda invalidado')."})
     if cierre_sem and rp_v and cierre_sem < rp_v:
         senales.append({"tipo": "aviso", "texto": "Cierre semanal por debajo del precio realizado: el suelo de 55.000–60.000 $ queda invalidado. El tramo 4 espera y la regla de tiempo se alarga 3 meses."})
     max_desde_plan = max((v["h"] for v in btc_d if v["t"] >= plan["inicio_plan"]), default=None) if btc_d else None
@@ -424,7 +429,7 @@ def main():
                 if btc_t1_alcanzado:
                     senales.append({"tipo": "compra", "texto": f"{nombre.upper()} está en la zona de su tramo {t['tramo']} y BTC ya tocó su tramo 1: la compra está dentro del plan."})
                 else:
-                    senales.append({"tipo": "aviso", "texto": f"{nombre.upper()} está en la zona de su tramo {t['tramo']}, pero BTC aún no ha tocado su tramo 1 ({t1_btc['min']:,}–{t1_btc['max']:,} $). Según el plan, las altcoins esperan.".replace(",", ".")})
+                    senales.append({"tipo": "aviso", "texto": f"{nombre.upper()} está en la zona de su tramo {t['tramo']}, pero BTC aún no ha tocado su tramo 1 ({miles(t1_btc['min'])}–{miles(t1_btc['max'])} $). Según el plan, las altcoins esperan."})
     dias_limite = (date.fromisoformat(plan["fecha_limite_compras"]) - HOY.date()).days
     senales.append({"tipo": "info", "texto": f"Regla de tiempo: quedan {dias_limite} días hasta el {plan['fecha_limite_compras']} para ejecutar los tramos de compra pendientes."})
 
