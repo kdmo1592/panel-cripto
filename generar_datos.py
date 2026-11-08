@@ -94,7 +94,7 @@ def velas_binance(simbolo, intervalo, limite=1000):
     r = get("https://data-api.binance.vision/api/v3/klines",
             params={"symbol": simbolo, "interval": intervalo, "limit": limite})
     return [{"t": iso(k[0]), "o": float(k[1]), "h": float(k[2]),
-             "l": float(k[3]), "c": float(k[4])} for k in r.json()]
+             "l": float(k[3]), "c": float(k[4]), "v": float(k[5])} for k in r.json()]
 
 
 @fuente("Kraken velas (alternativa)")
@@ -106,7 +106,8 @@ def velas_kraken(par, minutos):
         raise ValueError(d["error"])
     clave = next(k for k in d["result"] if k != "last")
     return [{"t": datetime.fromtimestamp(k[0], tz=timezone.utc).date().isoformat(),
-             "o": float(k[1]), "h": float(k[2]), "l": float(k[3]), "c": float(k[4])}
+             "o": float(k[1]), "h": float(k[2]), "l": float(k[3]), "c": float(k[4]),
+             "v": float(k[6])}
             for k in d["result"][clave]]
 
 
@@ -242,6 +243,19 @@ def semaforo(valor, verde, rojo, invertido=False):
     return "verde" if valor >= verde else "rojo" if valor <= rojo else "ambar"
 
 
+def rsi(cierres, n=14):
+    """RSI de Wilder sobre una lista de cierres."""
+    if len(cierres) <= n:
+        return None
+    sub = [max(cierres[i] - cierres[i - 1], 0) for i in range(1, len(cierres))]
+    baj = [max(cierres[i - 1] - cierres[i], 0) for i in range(1, len(cierres))]
+    ms, mb = sum(sub[:n]) / n, sum(baj[:n]) / n
+    for i in range(n, len(sub)):
+        ms = (ms * (n - 1) + sub[i]) / n
+        mb = (mb * (n - 1) + baj[i]) / n
+    return 100.0 if mb == 0 else 100 - 100 / (1 + ms / mb)
+
+
 def cambio(serie_c, n):
     if not serie_c or len(serie_c) <= n:
         return None
@@ -273,6 +287,11 @@ def main():
     btc_d = velas_binance("BTCUSDT", "1d") or velas_kraken("XBTUSD", 1440)
     btc_w = velas_binance("BTCUSDT", "1w") or velas_kraken("XBTUSD", 10080)
     sol_d = velas_binance("SOLUSDT", "1d") or velas_kraken("SOLUSD", 1440)
+    rotacion_d = {
+        "ETH": velas_binance("ETHUSDT", "1d") or velas_kraken("ETHUSD", 1440),
+        "LINK": velas_binance("LINKUSDT", "1d") or velas_kraken("LINKUSD", 1440),
+        "XRP": velas_binance("XRPUSDT", "1d") or velas_kraken("XRPUSD", 1440),
+    }
     hype_d = velas_hyperliquid("HYPE")
     fund = funding_hyperliquid() or {}
     sth = serie_bgeometrics("sth-realized-price")
@@ -337,6 +356,46 @@ def main():
 
     sol_btc_30 = ratio_vs_btc(sol_d)
     hype_btc_30 = ratio_vs_btc(hype_d)
+
+    senales = []
+
+    # --- señales de capitulación que dice usar Plan BTC (calculables gratis)
+    rsi_sem = rsi(cierres_w) if len(cierres_w) > 15 else None
+    vols_w = [x.get("v") for x in semanas if x.get("v") is not None]
+    vol_ratio = (vols_w[-1] / (sum(vols_w[-21:-1]) / 20)) if len(vols_w) >= 21 else None
+    rp_ratio = p_btc / rp_v if p_btc and rp_v else None
+    mz = mvrvz["valor"] if mvrvz else None
+    capitulacion = [
+        {"clave": "rsi", "nombre": "RSI semanal de BTC", "valor": rsi_sem, "formato": "n0",
+         "cumple": rsi_sem is not None and rsi_sem <= 30, "umbral": "≤ 30 (sobreventa)"},
+        {"clave": "vol", "nombre": "Volumen semanal / media de 20 semanas", "valor": vol_ratio, "formato": "x",
+         "cumple": vol_ratio is not None and vol_ratio >= 2, "umbral": "≥ 2× (clímax vendedor)"},
+        {"clave": "mvrvz_cap", "nombre": "MVRV Z-Score", "valor": mz, "formato": "n2",
+         "cumple": mz is not None and mz <= 0, "umbral": "≤ 0 (mercado en pérdidas)"},
+        {"clave": "rp_cap", "nombre": "Precio / precio realizado", "valor": rp_ratio, "formato": "x",
+         "cumple": rp_ratio is not None and rp_ratio <= 1.05, "umbral": "≤ 1,05× (toca el coste medio de todo el mercado)"},
+    ]
+
+    # --- rotación de ETH, LINK y XRP: rebote desde el mínimo marcado desde el inicio del plan
+    rotacion = []
+    for sim, velas in rotacion_d.items():
+        if not velas:
+            rotacion.append({"activo": sim, "precio": None})
+            continue
+        desde = [v for v in velas if v["t"] >= plan["inicio_plan"]] or velas[-1:]
+        minimo = min(desde, key=lambda v: v["l"])
+        precio = velas[-1]["c"]
+        btc_map = {v["t"]: v["c"] for v in (btc_d or [])}
+        rat = [v["c"] / btc_map[v["t"]] for v in velas if v["t"] in btc_map]
+        rotacion.append({
+            "activo": sim, "precio": precio, "cambio_7d": cambio([v["c"] for v in velas], 7),
+            "minimo": minimo["l"], "fecha_minimo": minimo["t"],
+            "rebote": precio / minimo["l"] - 1,
+            "objetivo_rebote": minimo["l"] * 1.5,
+            "vs_btc_30d": cambio(rat, 30),
+        })
+        if precio >= minimo["l"] * 1.5:
+            senales.append({"tipo": "venta", "texto": f"{sim} ha rebotado un 50% o más desde su mínimo del {minimo['t']}: según el plan, toca vender un tercio."})
 
     # --- indicadores
     def ind(clave, nombre, valor, formato, color, detalle, fuente_url, fecha=None):
@@ -408,7 +467,6 @@ def main():
                                           "estado": "ALCANZADO" if d is not None and d <= 0 else "pendiente"})
 
     # --- señales del plan
-    senales = []
     if cierre_sem and cierre_sem_ant and mm200 and mm200_ant:
         if cierre_sem_ant < mm200_ant and cierre_sem > mm200:
             senales.append({"tipo": "compra", "texto": "Tramo 4 (reserva) ACTIVADO: la semana pasada cerró bajo la media de 200 semanas y esta ha cerrado por encima."})
@@ -430,6 +488,9 @@ def main():
                     senales.append({"tipo": "compra", "texto": f"{nombre.upper()} está en la zona de su tramo {t['tramo']} y BTC ya tocó su tramo 1: la compra está dentro del plan."})
                 else:
                     senales.append({"tipo": "aviso", "texto": f"{nombre.upper()} está en la zona de su tramo {t['tramo']}, pero BTC aún no ha tocado su tramo 1 ({miles(t1_btc['min'])}–{miles(t1_btc['max'])} $). Según el plan, las altcoins esperan."})
+    t2_btc = plan["btc"]["entrada"][1]
+    if p_btc and p_btc <= t2_btc["max"]:
+        senales.append({"tipo": "compra", "texto": f"BTC está en su tramo 2 o por debajo: según el plan, toca permutar un tercio de ETH, LINK y XRP a BTC (si no lo has hecho ya)."})
     dias_limite = (date.fromisoformat(plan["fecha_limite_compras"]) - HOY.date()).days
     senales.append({"tipo": "info", "texto": f"Regla de tiempo: quedan {dias_limite} días hasta el {plan['fecha_limite_compras']} para ejecutar los tramos de compra pendientes."})
 
@@ -474,6 +535,9 @@ def main():
         "plan_estado": plan_estado,
         "senales": senales,
         "grafico": grafico,
+        "capitulacion": capitulacion,
+        "rotacion": rotacion,
+        "diario_btc": [[v["t"], round(v["h"]), round(v["l"]), round(v["c"])] for v in (btc_d or [])[-400:]],
         "historial": historial,
         "errores": ERRORES,
     }

@@ -143,6 +143,24 @@ function render(d){
   h += `<h2>Viento de fondo: ¿empuja o frena?</h2><div class="leyenda">Verde = a favor de las subidas · Rojo = en contra · Neutral = sin señal clara.</div>`;
   h += `<div class="grid">${d.fondo.map(tarjeta).join("")}</div>`;
 
+  // --- Señales de capitulación (las que dice usar Plan BTC)
+  if (d.capitulacion){
+    const n = d.capitulacion.filter(c=>c.cumple).length;
+    h += `<h2>¿Capitulación? Las señales que usa Plan BTC</h2><div class="leyenda">Las que se pueden calcular con datos gratuitos. Él dice que comprará cuando se alineen; aquí puedes comprobar por ti mismo si lo están. Alineadas: <b>${n} de ${d.capitulacion.length}</b>.</div>`;
+    h += `<table><thead><tr><th>Señal</th><th class="num">Valor</th><th>Umbral</th><th>Estado</th></tr></thead><tbody>` +
+      d.capitulacion.map(c=>`<tr><td>${c.nombre}</td><td class="num">${(fmt[c.formato]||fmt.n2)(c.valor)}</td><td>${c.umbral}</td><td>${c.valor==null?'<span class="chip gris">sin dato</span>':(c.cumple?'<span class="chip verde">✓ cumple</span>':'<span class="chip gris">✗ aún no</span>')}</td></tr>`).join("") +
+      `</tbody></table><p class="mut">Faltan dos que no tienen fuente gratuita fiable: el pico de pérdidas realizadas y el pico de liquidaciones en futuros. Míralas en <a href="https://charts.bgeometrics.com/" target="_blank" rel="noopener">BGeometrics</a> y <a href="https://www.coinglass.com/es/LiquidationData" target="_blank" rel="noopener">CoinGlass</a>.</p>`;
+  }
+
+  // --- Rotación ETH, LINK, XRP
+  if (d.rotacion){
+    h += `<h2>ETH, LINK y XRP: rotación</h2><div class="leyenda">Regla del plan: vender un tercio cuando rebote un 50% desde el mínimo marcado desde el ${d.plan.inicio_plan}; permutar otro tercio a BTC cuando BTC entre en su tramo 2.</div>`;
+    h += `<table><thead><tr><th>Activo</th><th class="num">Precio</th><th class="num">7 días</th><th class="num">Mínimo desde el inicio</th><th class="num">Rebote</th><th class="num">Precio para vender 1/3</th><th class="num">Frente a BTC (30 d)</th></tr></thead><tbody>` +
+      d.rotacion.map(r=> r.precio==null ? `<tr><td>${r.activo}</td><td colspan="6" class="mut">sin dato</td></tr>` :
+        `<tr><td>${r.activo}</td><td class="num">${fmt.usd(r.precio, r.precio<10?3:0)}</td><td class="num ${r.cambio_7d>=0?'sube':'baja'}">${fmt.pct(r.cambio_7d)}</td><td class="num">${fmt.usd(r.minimo, r.minimo<10?3:0)} <span class="mut">(${r.fecha_minimo})</span></td><td class="num">${fmt.pct(r.rebote)}</td><td class="num">${fmt.usd(r.objetivo_rebote, r.objetivo_rebote<10?3:0)}</td><td class="num ${r.vs_btc_30d>=0?'sube':'baja'}">${fmt.pct(r.vs_btc_30d)}</td></tr>`).join("") +
+      `</tbody></table>`;
+  }
+
   // --- Gráfico
   h += `<h2>BTC semanal frente a sus niveles de referencia</h2>
         <div class="leyenda">Escala logarítmica. Las franjas verdes son tus tres tramos de compra; las líneas discontinuas rojas, los de venta.</div>
