@@ -303,12 +303,20 @@ def main():
     rp_f = rp[-1][0] if rp else None
 
     # --- liquidez neta de la Fed (miles de millones $)
+    def a_miles_de_millones(serie):
+        # FRED publica unas series en millones y otras en miles de millones:
+        # se normalizan por magnitud (ninguna de estas pasa de 50.000 en miles de millones).
+        if not serie:
+            return serie
+        return [(f, v / 1000) for f, v in serie] if max(v for _, v in serie) > 50000 else serie
+
+    walcl_b, tga_b, rrp_b = (a_miles_de_millones(x) for x in (walcl, tga, rrp))
     liq = []
-    if walcl and tga and rrp:
-        for f, w in walcl:
-            t, r_ = valor_en(tga, f), valor_en(rrp, f)
+    if walcl_b and tga_b and rrp_b:
+        for f, w in walcl_b:
+            t, r_ = valor_en(tga_b, f), valor_en(rrp_b, f)
             if t is not None and r_ is not None:
-                liq.append((f, w / 1000 - t - r_))
+                liq.append((f, w - t - r_))
     liq_v = liq[-1][1] if liq else None
     liq_13 = liq[-1][1] / liq[-14][1] - 1 if len(liq) >= 14 else None
 
@@ -365,14 +373,14 @@ def main():
             semaforo(m2_yoy, 0.06, 0.02, invertido=True), "Masa monetaria; dato mensual",
             "https://fred.stlouisfed.org/series/M2SL", m2[-1][0] if m2 else None),
         ind("dom", "Dominancia de BTC", dom / 100 if dom else None, "pct1",
-            "ambar", "Alta y subiendo: el dinero se refugia en BTC y las altcoins sufren",
+            "ambar", "Contexto: si sube, el dinero se refugia en BTC y las altcoins sufren",
             "https://www.coingecko.com/es/global-charts"),
         ind("solbtc", "SOL frente a BTC (30 días)", sol_btc_30, "pct",
             semaforo(sol_btc_30, 0.05, -0.05, invertido=True),
-            "Positivo: SOL lo hace mejor que BTC", "https://data-api.binance.vision"),
+            "Positivo = SOL mejor que BTC; negativo = peor", "https://data-api.binance.vision"),
         ind("hypebtc", "HYPE frente a BTC (30 días)", hype_btc_30, "pct",
             semaforo(hype_btc_30, 0.05, -0.05, invertido=True),
-            "Positivo: HYPE lo hace mejor que BTC", "https://app.hyperliquid.xyz"),
+            "Positivo = HYPE mejor que BTC; negativo = peor", "https://app.hyperliquid.xyz"),
         ind("inghype", "Ingresos de Hyperliquid (30 días vs 30 anteriores)",
             ing_hype["variacion"] if ing_hype else None, "pct",
             semaforo(ing_hype["variacion"] if ing_hype else None, 0.10, -0.10, invertido=True),
@@ -408,6 +416,15 @@ def main():
     max_desde_plan = max((v["h"] for v in btc_d if v["t"] >= plan["inicio_plan"]), default=None) if btc_d else None
     if max_desde_plan and max_desde_plan >= 100000 and cierre_sem and sth_v and cierre_sem < sth_v:
         senales.append({"tipo": "venta", "texto": "Regla de deterioro: BTC superó 100.000 $ y ha cerrado la semana por debajo del coste STH. Vende el siguiente tramo pendiente."})
+    t1_btc = plan["btc"]["entrada"][0]
+    btc_t1_alcanzado = bool(btc_d) and min(v["l"] for v in btc_d if v["t"] >= plan["inicio_plan"]) <= t1_btc["max"]
+    for nombre in ("sol", "hype"):
+        for t in plan_estado[nombre]:
+            if t["estado"] == "EN ZONA":
+                if btc_t1_alcanzado:
+                    senales.append({"tipo": "compra", "texto": f"{nombre.upper()} está en la zona de su tramo {t['tramo']} y BTC ya tocó su tramo 1: la compra está dentro del plan."})
+                else:
+                    senales.append({"tipo": "aviso", "texto": f"{nombre.upper()} está en la zona de su tramo {t['tramo']}, pero BTC aún no ha tocado su tramo 1 ({t1_btc['min']:,}–{t1_btc['max']:,} $). Según el plan, las altcoins esperan.".replace(",", ".")})
     dias_limite = (date.fromisoformat(plan["fecha_limite_compras"]) - HOY.date()).days
     senales.append({"tipo": "info", "texto": f"Regla de tiempo: quedan {dias_limite} días hasta el {plan['fecha_limite_compras']} para ejecutar los tramos de compra pendientes."})
 
