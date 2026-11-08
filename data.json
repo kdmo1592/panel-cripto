@@ -1,14 +1,14 @@
 {
- "actualizado": "2026-11-08 16:59 UTC",
+ "actualizado": "2026-11-08 17:00 UTC",
  "precios": {
-  "BTC": 75768.6,
-  "SOL": 89.04,
-  "HYPE": 76.835
+  "BTC": 75773.33,
+  "SOL": 89.06,
+  "HYPE": 76.858
  },
  "cambios_7d": {
-  "BTC": -0.0329964009495366,
-  "SOL": -0.05807680101555057,
-  "HYPE": -0.12529456631868952
+  "BTC": -0.03293603389743982,
+  "SOL": -0.057865227969956634,
+  "HYPE": -0.12503272959096534
  },
  "niveles": {
   "mm200": 67471.86314999999,
@@ -23,7 +23,7 @@
   {
    "clave": "mm200",
    "nombre": "Precio / media de 200 semanas",
-   "valor": 1.1229658773695805,
+   "valor": 1.1230359806656682,
    "formato": "x",
    "color": "verde",
    "detalle": "Media de 200 semanas: 67.472 $",
@@ -33,7 +33,7 @@
   {
    "clave": "sth",
    "nombre": "Precio / coste de compradores recientes (STH)",
-   "valor": 0.9996431193610716,
+   "valor": 0.9997055239977493,
    "formato": "x",
    "color": "ambar",
    "detalle": "Coste STH: 75.796 $",
@@ -95,7 +95,7 @@
   {
    "clave": "dom",
    "nombre": "Dominancia de BTC",
-   "valor": 0.6002476801085852,
+   "valor": 0.6000414077116912,
    "formato": "pct1",
    "color": "ambar",
    "detalle": "Contexto: si sube, el dinero se refugia en BTC y las altcoins sufren",
@@ -105,7 +105,7 @@
   {
    "clave": "solbtc",
    "nombre": "SOL frente a BTC (30 días)",
-   "valor": -0.110146208188313,
+   "valor": -0.11000189071346922,
    "formato": "pct",
    "color": "rojo",
    "detalle": "Positivo = SOL mejor que BTC; negativo = peor",
@@ -115,7 +115,7 @@
   {
    "clave": "hypebtc",
    "nombre": "HYPE frente a BTC (30 días)",
-   "valor": -0.004104886622244175,
+   "valor": -0.003868958031356229,
    "formato": "pct",
    "color": "ambar",
    "detalle": "Positivo = HYPE mejor que BTC; negativo = peor",
@@ -238,7 +238,7 @@
     "max": 70000,
     "peso": "30%",
     "estado": "por encima",
-    "distancia": -0.07613444091615795
+    "distancia": -0.07619211139328308
    },
    {
     "tramo": "2",
@@ -246,7 +246,7 @@
     "max": 65000,
     "peso": "30%",
     "estado": "por encima",
-    "distancia": -0.14212483799357523
+    "distancia": -0.14217838915090575
    },
    {
     "tramo": "3",
@@ -254,7 +254,7 @@
     "max": 60000,
     "peso": "25%",
     "estado": "por encima",
-    "distancia": -0.2081152350709925
+    "distancia": -0.20816466690852842
    }
   ],
   "sol": [
@@ -272,7 +272,7 @@
     "max": 78,
     "peso": "1/3",
     "estado": "por encima",
-    "distancia": -0.12398921832884102
+    "distancia": -0.12418594206153155
    },
    {
     "tramo": "3",
@@ -280,7 +280,7 @@
     "max": 65,
     "peso": "1/3",
     "estado": "por encima",
-    "distancia": -0.26999101527403424
+    "distancia": -0.270154951717943
    }
   ],
   "hype": [
@@ -290,7 +290,7 @@
     "max": 75,
     "peso": "1/3",
     "estado": "por encima",
-    "distancia": -0.023882345285351603
+    "distancia": -0.024174451586041812
    },
    {
     "tramo": "2",
@@ -298,7 +298,7 @@
     "max": 65,
     "peso": "1/3",
     "estado": "por encima",
-    "distancia": -0.15403136591397137
+    "distancia": -0.15428452470790288
    },
    {
     "tramo": "3",
@@ -306,7 +306,7 @@
     "max": 55,
     "peso": "1/3",
     "estado": "por encima",
-    "distancia": -0.28418038654259126
+    "distancia": -0.28439459782976406
    }
   ],
   "salida_btc": [
@@ -314,21 +314,21 @@
     "tramo": "1",
     "precio": 100000,
     "peso": "20%",
-    "distancia": 0.3198079415483457,
+    "distancia": 0.3197255551524527,
     "estado": "pendiente"
    },
    {
     "tramo": "2",
     "precio": 110000,
     "peso": "25%",
-    "distancia": 0.45178873570318046,
+    "distancia": 0.45169811066769805,
     "estado": "pendiente"
    },
    {
     "tramo": "3",
     "precio": 120000,
     "peso": "25%",
-    "distancia": 0.583769529858015,
+    "distancia": 0.5836706661829432,
     "estado": "pendiente"
    }
   ]
@@ -336,7 +336,7 @@
  "senales": [
   {
    "tipo": "aviso",
-   "texto": "SOL está en la zona de su tramo 1. pero BTC aún no ha tocado su tramo 1 (68.000–70.000 $). Según el plan. las altcoins esperan."
+   "texto": "SOL está en la zona de su tramo 1, pero BTC aún no ha tocado su tramo 1 (68.000–70.000 $). Según el plan, las altcoins esperan."
   },
   {
    "tipo": "info",
@@ -2113,13 +2113,13 @@
   {
    "semana": "2026-11-01",
    "btc": 78354.0,
-   "sol": 89.04,
-   "hype": 76.835,
+   "sol": 89.06,
+   "hype": 76.858,
    "mm200": 67471.86314999999,
    "sth": 75795.65,
    "mvrvz": 0.7846,
    "fng": 28,
-   "dom": 60.02476801085852,
+   "dom": 60.004140771169126,
    "colores": {
     "mm200": "verde",
     "sth": "ambar",
