@@ -2133,30 +2133,6 @@
     "hypebtc": "ambar",
     "inghype": "ambar"
    }
-  },
-  {
-   "semana": "2026-11-07",
-   "btc": 68620.11457639458,
-   "sol": 95,
-   "hype": 80,
-   "mm200": 51031.1903903428,
-   "sth": 74600.0,
-   "mvrvz": 1.1,
-   "fng": 22,
-   "dom": 61.4,
-   "colores": {
-    "mm200": "ambar",
-    "sth": "ambar",
-    "mvrvz": "ambar",
-    "fng": "verde",
-    "funding": "verde",
-    "liquidez": "ambar",
-    "m2": "rojo",
-    "dom": "ambar",
-    "solbtc": "ambar",
-    "hypebtc": "verde",
-    "inghype": "rojo"
-   }
   }
  ],
  "errores": []

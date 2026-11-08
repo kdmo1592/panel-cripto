@@ -175,18 +175,23 @@ function dibujar(d){
     beforeDatasetsDraw(chart){
       const {ctx, chartArea:a, scales:{y}} = chart;
       ctx.save();
+      ctx.font = "11px Arial";
       bandas.forEach(b=>{
         const y1 = y.getPixelForValue(b.max), y2 = y.getPixelForValue(b.min);
         ctx.fillStyle = "rgba(31,157,85,0.12)"; ctx.fillRect(a.left, y1, a.right-a.left, y2-y1);
-        ctx.fillStyle = "#1f9d55"; ctx.font = "11px Arial"; ctx.fillText("Compra "+b.tramo, a.left+4, y1+12);
       });
+      // Una sola etiqueta por grupo: en escala logarítmica los tramos quedan muy juntos
+      const altoC = y.getPixelForValue(Math.max(...bandas.map(b=>b.max)));
+      ctx.fillStyle = "#1f9d55"; ctx.fillText("Compra: tramos " + bandas.map(b=>b.tramo).join("-"), a.left+4, altoC-4);
       ctx.setLineDash([5,4]); ctx.strokeStyle = "#c53030";
+      let altoV = null;
       salidas.forEach(s=>{
         const yy = y.getPixelForValue(s.precio);
         if (yy < a.top || yy > a.bottom) return;
         ctx.beginPath(); ctx.moveTo(a.left, yy); ctx.lineTo(a.right, yy); ctx.stroke();
-        ctx.fillStyle = "#c53030"; ctx.fillText("Venta "+s.tramo, a.left+4, yy-4);
+        altoV = altoV==null ? yy : Math.min(altoV, yy);
       });
+      if (altoV!=null){ ctx.fillStyle = "#c53030"; ctx.fillText("Venta: " + salidas.map(s=>(s.precio/1000)+"k").join(" / "), a.left+4, altoV-4); }
       ctx.restore();
     }
   };
