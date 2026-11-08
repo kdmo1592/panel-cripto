@@ -52,6 +52,12 @@
   footer{margin-top:30px;font-size:12.5px;color:var(--mut)}
   footer a{color:var(--azul)}
   .vacio{background:var(--card);border:1px dashed var(--ln);border-radius:10px;padding:30px;text-align:center;color:var(--mut)}
+  .guia{background:var(--card);border:1px solid var(--ln);border-radius:10px;padding:10px 16px;margin-bottom:18px;font-size:14px}
+  .guia summary{cursor:pointer;font-weight:700;color:var(--azul)}
+  .guia h3{font-size:14.5px;margin:16px 0 6px}
+  .guia p,.guia li{margin:4px 0}
+  .guia ol,.guia ul{padding-left:20px;margin:4px 0}
+  .guia table{font-size:13px;margin:6px 0}
   @media (max-width:760px){.precios{grid-template-columns:1fr}.tablas{grid-template-columns:1fr}.graf{height:320px}}
 </style>
 </head>
@@ -64,6 +70,69 @@
     </div>
     <div class="mut">Rutina: 10 minutos a la semana. Contrasta con el plan y apunta en el diario.</div>
   </header>
+
+  <details class="guia">
+    <summary>Cómo usar este panel (guía de lectura)</summary>
+    <p>Ningún dato decide solo. El panel responde a tres preguntas, en este orden: <b>qué dice mi plan</b>, <b>si el mercado está barato o caro</b> y <b>si el entorno empuja o frena</b>.</p>
+
+    <h3>Rutina de 10 minutos a la semana</h3>
+    <ol>
+      <li><b>Fecha de actualización</b> (bajo el título): ¿son datos recientes? Si no, recarga la página.</li>
+      <li><b>Avisos del plan</b>: si no hay ninguno verde ni rojo, esta semana no toca hacer nada. También es una decisión.</li>
+      <li><b>Tablas de tramos</b>: cuánto falta para el siguiente.</li>
+      <li><b>Valoración y capitulación</b>: ¿se van poniendo en verde, se alinean señales?</li>
+      <li><b>Viento de fondo</b>: ¿algún cambio fuerte?</li>
+      <li>Apunta en el <b>diario</b> lo que decidas (aunque sea «no hago nada») y compáralo con lo que diga Plan BTC esa semana.</li>
+    </ol>
+
+    <h3>1. Cabecera y precios</h3>
+    <p><b>Actualizado</b>: hora de la última recogida de datos, en UTC (en invierno, España va una hora por delante). <b>Semana cerrada</b>: último domingo completo; los datos semanales solo usan semanas terminadas. Los precios con su variación en 7 días son solo una referencia rápida.</p>
+
+    <h3>2. Tu plan hoy</h3>
+    <p>Avisos con franja de color: <b>verde</b> = compra permitida ahora · <b>rojo</b> = venta que pide el plan · <b>ámbar</b> = vigilar, sin acción todavía · <b>gris</b> = información.</p>
+    <p>Columna <b>Estado</b> de las tablas de compra: «falta caer X%» = distancia hasta el tramo · <b>EN ZONA</b> = precio dentro del tramo · «por debajo de la zona» = ya más barato que el tramo. En la de venta: «falta subir X%» o <b>ALCANZADO</b>. El núcleo (30%) no se vende.</p>
+
+    <h3>3. Valoración: ¿barato o caro?</h3>
+    <p>Aquí <b>verde = barato o miedo (zona de compra)</b> y <b>rojo = caro o euforia (zona de venta)</b>. Cada tarjeta tiene un desplegable «Cómo leerlo» con sus umbrales.</p>
+    <ul>
+      <li><b>Precio / media de 200 semanas</b>: cerca de 1× ha coincidido con los suelos de cada ciclo; por encima de 2×, con euforia.</li>
+      <li><b>Precio / coste STH</b>: si quien compró en los últimos 5 meses gana (&gt;1) o pierde (&lt;1). Perdiendo tiende a vender con miedo.</li>
+      <li><b>MVRV Z-Score</b>: separación entre el precio y el coste medio de todas las monedas. Por debajo de 0 ha marcado suelos.</li>
+      <li><b>Miedo y codicia</b>: se lee al revés; el miedo extremo (≤25) suele ser buena compra.</li>
+      <li><b>Funding</b>: coste del apalancamiento comprador. Unos 11% al año es lo normal; muy alto indica euforia; negativo, pesimismo.</li>
+    </ul>
+
+    <h3>4. Viento de fondo: ¿empuja o frena?</h3>
+    <p>Aquí <b>verde = el entorno favorece las subidas</b> y <b>rojo = las frena</b>. No dicen dónde comprar, sino si el contexto acompaña.</p>
+    <ul>
+      <li><b>Liquidez neta de la Fed</b> y <b>M2</b>: más dinero en el sistema empuja a los activos de riesgo, con retraso.</li>
+      <li><b>Dominancia de BTC</b>: siempre en neutral, es contexto. Si sube, las altcoins sufren.</li>
+      <li><b>SOL / HYPE frente a BTC</b>: si lo hacen mejor (+) o peor (−) que BTC en 30 días. Una altcoin débil en una caída suele seguir cayendo más.</li>
+      <li><b>Ingresos de Hyperliquid</b>: financian las recompras de HYPE; si caen, se debilita su soporte fundamental.</li>
+    </ul>
+
+    <h3>5. ¿Capitulación? Las señales que usa Plan BTC</h3>
+    <p>Las 4 señales que él dice esperar y que se pueden calcular gratis, con el número de las que están alineadas. Sirve para comprobarlo por ti mismo y para auditar si él compra cuando su propio método lo indica. Las otras dos (pérdidas realizadas y liquidaciones) se miran a mano en los enlaces de debajo.</p>
+
+    <h3>6. ETH, LINK y XRP</h3>
+    <p><b>Mínimo desde el inicio</b>: el precio más bajo desde que empezó el plan. <b>Precio para vender 1/3</b>: ese mínimo + 50%. Baja mientras la moneda siga marcando mínimos nuevos y se queda fijo cuando deja de caer. Tu precio medio de compra no aparece porque el repositorio es público; está en el documento del plan.</p>
+
+    <h3>7. Gráfico de BTC semanal</h3>
+    <p>Escala logarítmica: la misma distancia vertical es el mismo porcentaje.</p>
+    <ul>
+      <li><b>Azul</b>: precio (cierre semanal).</li>
+      <li><b>Morado</b>: media de 200 semanas, el suelo histórico de los mercados bajistas.</li>
+      <li><b>Naranja</b>: coste de los compradores recientes. Por encima del precio actúa de techo (mercado bajista); por debajo, de soporte (alcista). Fíjate en hacia qué lado la cruza el precio.</li>
+      <li><b>Gris discontinuo</b>: precio realizado, el suelo extremo.</li>
+      <li><b>Franjas verdes</b>: tus tramos de compra. <b>Líneas rojas</b>: tus precios de venta.</li>
+    </ul>
+
+    <h3>8. Histórico semanal</h3>
+    <p>Una fila por semana, con los semáforos como puntos de color en el orden de las tarjetas (5 de valoración y luego 6 de viento de fondo). Sirve para ver la <b>tendencia</b>, por ejemplo si poco a poco se van poniendo en verde.</p>
+
+    <h3>Si algo falla</h3>
+    <p>Si una fuente no responde, al final aparece en rojo y esa tarjeta muestra «sin dato»; se reintenta al día siguiente. Para datos al momento: en el repositorio, <b>Actions → Actualizar panel → Run workflow</b>.</p>
+  </details>
 
   <div id="contenido"></div>
 </div>
