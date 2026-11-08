@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panel cripto · BTC, SOL y HYPE</title>
+<link rel="icon" href="data:,">
+<script src="assets/chart.umd.js"></script>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#fff; --tx:#1d2330; --mut:#647084; --ln:#e3e6ec;
+    --verde:#1f9d55; --verde-bg:#e7f6ee; --ambar:#c27c0e; --ambar-bg:#fdf3e1;
+    --rojo:#c53030; --rojo-bg:#fdeaea; --gris:#8a94a6; --gris-bg:#eef0f3; --azul:#2b5797;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--tx);line-height:1.45}
+  .wrap{max-width:1120px;margin:0 auto;padding:20px 16px 48px}
+  header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:18px}
+  h1{font-size:22px;margin:0}
+  h2{font-size:17px;margin:28px 0 10px}
+  .mut{color:var(--mut);font-size:13px}
+  .precios{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .precio{background:var(--card);border:1px solid var(--ln);border-radius:10px;padding:14px 16px}
+  .precio .n{font-size:13px;color:var(--mut);font-weight:600}
+  .precio .v{font-size:26px;font-weight:700;margin-top:2px}
+  .sube{color:var(--verde)} .baja{color:var(--rojo)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+  .card{background:var(--card);border:1px solid var(--ln);border-left:6px solid var(--gris);border-radius:10px;padding:12px 14px}
+  .card.verde{border-left-color:var(--verde)} .card.ambar{border-left-color:var(--ambar)} .card.rojo{border-left-color:var(--rojo)}
+  .card .t{font-size:13px;font-weight:600;color:var(--mut)}
+  .card .v{font-size:24px;font-weight:700;margin:4px 0}
+  .card .d{font-size:12.5px;color:var(--mut)}
+  .card details{margin-top:6px;font-size:12.5px}
+  .card summary{cursor:pointer;color:var(--azul)}
+  .chip{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.3px}
+  .chip.verde{background:var(--verde-bg);color:var(--verde)} .chip.ambar{background:var(--ambar-bg);color:var(--ambar)}
+  .chip.rojo{background:var(--rojo-bg);color:var(--rojo)} .chip.gris{background:var(--gris-bg);color:var(--gris)}
+  table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--ln);border-radius:10px;overflow:hidden;font-size:14px}
+  th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--ln)}
+  th{background:#f0f2f6;font-size:12.5px;color:var(--mut)}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  .tablas{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .senal{background:var(--card);border:1px solid var(--ln);border-radius:10px;padding:10px 14px;margin-bottom:8px;font-size:14px}
+  .senal.compra{border-left:6px solid var(--verde)} .senal.venta{border-left:6px solid var(--rojo)}
+  .senal.aviso{border-left:6px solid var(--ambar)} .senal.info{border-left:6px solid var(--gris)}
+  .leyenda{font-size:13px;color:var(--mut);margin:-4px 0 10px}
+  .graf{background:var(--card);border:1px solid var(--ln);border-radius:10px;padding:12px;height:420px}
+  .hist td{font-size:13px}
+  .punto{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:2px}
+  .punto.verde{background:var(--verde)} .punto.ambar{background:var(--ambar)} .punto.rojo{background:var(--rojo)} .punto.gris{background:var(--gris)}
+  .errores{font-size:12.5px;color:var(--rojo)}
+  footer{margin-top:30px;font-size:12.5px;color:var(--mut)}
+  footer a{color:var(--azul)}
+  .vacio{background:var(--card);border:1px dashed var(--ln);border-radius:10px;padding:30px;text-align:center;color:var(--mut)}
+  @media (max-width:760px){.precios{grid-template-columns:1fr}.tablas{grid-template-columns:1fr}.graf{height:320px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Panel semanal · BTC, SOL y HYPE</h1>
+      <div class="mut" id="actualizado">Cargando…</div>
+    </div>
+    <div class="mut">Rutina: 10 minutos a la semana. Contrasta con el plan y apunta en el diario.</div>
+  </header>
+
+  <div id="contenido"></div>
+</div>
+
+<script>
+const fmt = {
+  usd: (v, dec=0) => v==null ? "—" : v.toLocaleString("es-ES",{minimumFractionDigits:dec,maximumFractionDigits:dec}) + " $",
+  pct: (v, dec=1) => v==null ? "—" : (v>0?"+":"") + (v*100).toLocaleString("es-ES",{minimumFractionDigits:dec,maximumFractionDigits:dec}) + " %",
+  pct1:(v) => v==null ? "—" : (v*100).toLocaleString("es-ES",{minimumFractionDigits:1,maximumFractionDigits:1}) + " %",
+  x:   (v) => v==null ? "—" : v.toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:2}) + "×",
+  n2:  (v) => v==null ? "—" : v.toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:2}),
+  n0:  (v) => v==null ? "—" : v.toLocaleString("es-ES",{maximumFractionDigits:0}),
+};
+const decPrecio = s => s==="BTC" ? 0 : 2;
+const nombreColor = {verde:"verde", ambar:"neutral", rojo:"rojo", gris:"sin dato"};
+
+// Explicación de cada indicador: qué mide y cómo leer el color.
+const AYUDA = {
+  mm200:"Cuánto está el precio por encima de la media de los últimos 4 años. Cerca de 1× (o por debajo) ha coincidido con los suelos de cada ciclo; por encima de 2× con zonas de euforia. Verde ≤ 1,15× · Rojo ≥ 2×.",
+  sth:"Compara el precio con lo que pagaron, de media, quienes compraron en los últimos 5 meses. Muy por debajo: esos compradores pierden y venden con miedo (capitulación). Muy por encima: tienen grandes ganancias y tienden a vender. Verde ≤ 0,9× · Rojo ≥ 1,25×.",
+  mvrvz:"Mide si el valor de mercado está muy separado del coste medio de todas las monedas. Por debajo de 0 ha marcado suelos; en este ciclo los techos se han dado con valores más bajos que antes. Verde ≤ 0,5 · Rojo ≥ 3.",
+  fng:"Encuesta indirecta del sentimiento (volatilidad, volumen, redes). Indicador de contrarian: el miedo extremo suele coincidir con buenas compras y la codicia extrema con buenas ventas. Verde ≤ 25 · Rojo ≥ 75.",
+  funding:"Lo que pagan los que apuestan al alza con apalancamiento. Negativo o muy bajo: el mercado apalancado está pesimista. Muy alto: exceso de euforia y riesgo de liquidaciones en cadena. Verde ≤ 5 % · Rojo ≥ 30 %.",
+  liquidez:"Balance de la Reserva Federal menos el dinero aparcado en la cuenta del Tesoro y en repos inversos. Es la 'liquidez' de la que hablan muchos analistas: cuando sube, empuja a los activos de riesgo. Verde ≥ +2 % · Rojo ≤ −2 % en 13 semanas.",
+  m2:"Crecimiento anual de la masa monetaria de EE. UU. Más dinero en circulación suele acompañar a subidas de BTC con algunos meses de retraso. Verde ≥ 6 % · Rojo ≤ 2 %.",
+  dom:"Porcentaje del valor total del mercado cripto que es BTC. Si sube, el dinero se refugia en BTC y las altcoins lo hacen peor. Si baja con fuerza, suele ser fase de euforia en altcoins. Siempre en neutral: es contexto, no señal.",
+  solbtc:"Rendimiento de SOL frente a BTC en 30 días. Si SOL cae más que BTC en las caídas, sus tramos de compra llegarán antes. Verde ≥ +5 % · Rojo ≤ −5 %.",
+  hypebtc:"Rendimiento de HYPE frente a BTC en 30 días. Verde ≥ +5 % · Rojo ≤ −5 %.",
+  inghype:"Ingresos del protocolo Hyperliquid (comisiones). Financian las recompras de HYPE: si caen, el soporte fundamental del precio se debilita. Verde ≥ +10 % · Rojo ≤ −10 %.",
+};
+
+function tarjeta(i){
+  const v = (fmt[i.formato]||fmt.n2)(i.valor);
+  const fecha = i.fecha ? ` · dato del ${i.fecha}` : "";
+  return `<div class="card ${i.color}">
+    <div class="t">${i.nombre}</div>
+    <div class="v">${v} <span class="chip ${i.color}">${nombreColor[i.color]||i.color}</span></div>
+    <div class="d">${i.detalle||""}${fecha}</div>
+    <details><summary>Cómo leerlo</summary>${AYUDA[i.clave]||""} <a href="${i.fuente}" target="_blank" rel="noopener">Fuente</a></details>
+  </div>`;
+}
+
+function tablaEntrada(titulo, filas, dec){
+  const rows = filas.map(t=>{
+    let est = t.estado, cls = "";
+    if (est==="EN ZONA"){cls="sube"; est="<b>EN ZONA</b>";}
+    else if (est==="por encima"){est = `falta caer ${fmt.pct1(Math.abs(t.distancia))}`;}
+    else if (est==="por debajo"){cls="baja"; est = `por debajo de la zona (a ${fmt.pct1(Math.abs(t.distancia))})`;}
+    return `<tr><td>${t.tramo}</td><td class="num">${fmt.usd(t.min,dec)} – ${fmt.usd(t.max,dec)}</td><td class="num">${t.peso}</td><td class="${cls}">${est}</td></tr>`;
+  }).join("");
+  return `<table><thead><tr><th>${titulo}</th><th class="num">Zona</th><th class="num">Peso</th><th>Estado</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function render(d){
+  document.getElementById("actualizado").textContent = `Actualizado: ${d.actualizado} · semana cerrada: ${d.niveles.fin_semana||"—"}`;
+  const P = d.precios, C = d.cambios_7d, N = d.niveles, plan = d.plan, PE = d.plan_estado;
+  let h = "";
+
+  h += `<div class="precios">` + ["BTC","SOL","HYPE"].map(s=>{
+    const c = C[s]; const cls = c==null ? "" : (c>=0?"sube":"baja");
+    return `<div class="precio"><div class="n">${s}</div><div class="v">${fmt.usd(P[s],decPrecio(s))}</div><div class="mut"><span class="${cls}">${fmt.pct(c)}</span> en 7 días</div></div>`;
+  }).join("") + `</div>`;
+
+  // --- Plan
+  h += `<h2>Tu plan hoy</h2>`;
+  h += d.senales.map(s=>`<div class="senal ${s.tipo}">${s.texto}</div>`).join("");
+  h += `<div class="tablas">${tablaEntrada("Compra BTC", PE.btc, 0)}`;
+  const salida = PE.salida_btc.map(t=>`<tr><td>${t.tramo}</td><td class="num">${fmt.usd(t.precio)}</td><td class="num">${t.peso}</td><td>${t.estado==="ALCANZADO"?"<b class='sube'>ALCANZADO</b>":"falta subir "+fmt.pct1(t.distancia)}</td></tr>`).join("");
+  h += `<table><thead><tr><th>Venta BTC</th><th class="num">Precio</th><th class="num">Peso</th><th>Estado</th></tr></thead><tbody>${salida}
+        <tr><td>Núcleo</td><td class="num">no se vende</td><td class="num">${plan.btc.nucleo}</td><td></td></tr></tbody></table></div>`;
+  h += `<div class="tablas" style="margin-top:12px">${tablaEntrada("Compra SOL", PE.sol, 2)}${tablaEntrada("Compra HYPE", PE.hype, 2)}</div>`;
+  h += `<p class="mut">Tramo 4 de BTC (${plan.btc.reserva.peso}): ${plan.btc.reserva.regla.toLowerCase()}. ${plan.hype.aviso}.</p>`;
+
+  // --- Indicadores
+  h += `<h2>Valoración: ¿barato o caro?</h2><div class="leyenda">Verde = zona de compra (barato, miedo) · Rojo = zona de venta (caro, euforia) · Neutral = sin señal clara.</div>`;
+  h += `<div class="grid">${d.valoracion.map(tarjeta).join("")}</div>`;
+  h += `<h2>Viento de fondo: ¿empuja o frena?</h2><div class="leyenda">Verde = a favor de las subidas · Rojo = en contra · Neutral = sin señal clara.</div>`;
+  h += `<div class="grid">${d.fondo.map(tarjeta).join("")}</div>`;
+
+  // --- Gráfico
+  h += `<h2>BTC semanal frente a sus niveles de referencia</h2>
+        <div class="leyenda">Escala logarítmica. Las franjas verdes son tus tres tramos de compra; las líneas discontinuas rojas, los de venta.</div>
+        <div class="graf"><canvas id="graf"></canvas></div>`;
+
+  // --- Histórico
+  const claves = ["mm200","sth","mvrvz","fng","funding","liquidez","m2","dom","solbtc","hypebtc","inghype"];
+  const hist = [...d.historial].reverse().slice(0,26).map(r=>`<tr><td>${r.semana}</td><td class="num">${fmt.usd(r.btc)}</td><td class="num">${fmt.usd(r.sol,2)}</td><td class="num">${fmt.usd(r.hype,2)}</td><td class="num">${fmt.usd(r.sth)}</td><td class="num">${fmt.n0(r.fng)}</td><td>${claves.map(k=>`<span class="punto ${(r.colores||{})[k]||"gris"}" title="${k}"></span>`).join("")}</td></tr>`).join("");
+  h += `<h2>Histórico semanal</h2><div class="leyenda">Una fila por semana cerrada (domingo). Los puntos son los semáforos, en el orden de las tarjetas.</div>
+        <table class="hist"><thead><tr><th>Semana</th><th class="num">BTC</th><th class="num">SOL</th><th class="num">HYPE</th><th class="num">Coste STH</th><th class="num">Miedo/codicia</th><th>Semáforos</th></tr></thead><tbody>${hist}</tbody></table>`;
+
+  if (d.errores && d.errores.length){
+    const esc = s => String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+    h += `<h2>Fuentes que fallaron en la última actualización</h2><div class="errores">${d.errores.map(e=>`<div>${esc(e)}</div>`).join("")}</div>`;
+  }
+  h += `<footer>Datos: Binance, Hyperliquid, BGeometrics (con unos días de retraso en el plan gratuito), FRED, alternative.me, CoinGecko y DefiLlama. Se actualiza cada día a las 06:17 UTC. Los niveles del plan están en <code>plan.json</code>. Esto es una herramienta de seguimiento, no una recomendación.</footer>`;
+
+  document.getElementById("contenido").innerHTML = h;
+  dibujar(d);
+}
+
+function dibujar(d){
+  if (typeof Chart === "undefined") return;
+  const g = d.grafico;
+  const labels = g.map(p=>p.t);
+  const bandas = d.plan.btc.entrada;
+  const salidas = d.plan.btc.salida;
+  const pluginBandas = {
+    id:"bandas",
+    beforeDatasetsDraw(chart){
+      const {ctx, chartArea:a, scales:{y}} = chart;
+      ctx.save();
+      bandas.forEach(b=>{
+        const y1 = y.getPixelForValue(b.max), y2 = y.getPixelForValue(b.min);
+        ctx.fillStyle = "rgba(31,157,85,0.12)"; ctx.fillRect(a.left, y1, a.right-a.left, y2-y1);
+        ctx.fillStyle = "#1f9d55"; ctx.font = "11px Arial"; ctx.fillText("Compra "+b.tramo, a.left+4, y1+12);
+      });
+      ctx.setLineDash([5,4]); ctx.strokeStyle = "#c53030";
+      salidas.forEach(s=>{
+        const yy = y.getPixelForValue(s.precio);
+        if (yy < a.top || yy > a.bottom) return;
+        ctx.beginPath(); ctx.moveTo(a.left, yy); ctx.lineTo(a.right, yy); ctx.stroke();
+        ctx.fillStyle = "#c53030"; ctx.fillText("Venta "+s.tramo, a.left+4, yy-4);
+      });
+      ctx.restore();
+    }
+  };
+  new Chart(document.getElementById("graf"), {
+    type:"line",
+    data:{labels, datasets:[
+      {label:"BTC (cierre semanal)", data:g.map(p=>p.c), borderColor:"#2a78d6", borderWidth:2, pointRadius:0, pointHoverRadius:4, tension:0.1},
+      {label:"Media de 200 semanas", data:g.map(p=>p.mm200), borderColor:"#6250d6", borderWidth:2, pointRadius:0, pointHoverRadius:4},
+      {label:"Coste compradores recientes (STH)", data:g.map(p=>p.sth), borderColor:"#eb6834", borderWidth:2, pointRadius:0, pointHoverRadius:4},
+      {label:"Precio realizado", data:g.map(p=>p.rp), borderColor:"#8a94a6", borderWidth:2, borderDash:[4,4], pointRadius:0, pointHoverRadius:4},
+    ]},
+    options:{
+      responsive:true, maintainAspectRatio:false, interaction:{mode:"index", intersect:false},
+      scales:{
+        y:{type:"logarithmic", grid:{color:"#eef0f3"},
+           ticks:{color:"#647084", callback:v=>{const m=v/Math.pow(10,Math.floor(Math.log10(v))); return [1,2,3,5,7].some(k=>Math.abs(m-k)<1e-6) ? (v>=1000? (v/1000)+"k" : v) : "";}}},
+        x:{grid:{display:false}, ticks:{color:"#647084", maxTicksLimit:10}}
+      },
+      plugins:{legend:{position:"bottom"}, tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt.usd(c.parsed.y)}`}}}
+    },
+    plugins:[pluginBandas]
+  });
+}
+
+fetch("data.json?v=" + Date.now())
+  .then(r=>{ if(!r.ok) throw new Error(r.status); return r.json(); })
+  .then(render)
+  .catch(()=>{
+    document.getElementById("actualizado").textContent = "Aún sin datos";
+    document.getElementById("contenido").innerHTML = `<div class="vacio">Todavía no hay datos. Ve a la pestaña <b>Actions</b> del repositorio, elige <b>Actualizar panel</b> y pulsa <b>Run workflow</b>. En un par de minutos aparecerán aquí.</div>`;
+  });
+</script>
+</body>
+</html>

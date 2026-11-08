@@ -1,0 +1,36 @@
+{
+  "_nota": "Niveles del plan de inversión. Sin importes: el repositorio es público. Cambia aquí los niveles si cambias el plan.",
+  "inicio_plan": "2026-11-08",
+  "fecha_limite_compras": "2027-03-31",
+  "btc": {
+    "entrada": [
+      {"tramo": "1", "min": 68000, "max": 70000, "peso": "30%"},
+      {"tramo": "2", "min": 62000, "max": 65000, "peso": "30%"},
+      {"tramo": "3", "min": 55000, "max": 60000, "peso": "25%"}
+    ],
+    "reserva": {"tramo": "4", "peso": "15%", "regla": "Cierre semanal por debajo de la media de 200 semanas y, la semana siguiente, cierre por encima"},
+    "salida": [
+      {"tramo": "1", "precio": 100000, "peso": "20%"},
+      {"tramo": "2", "precio": 110000, "peso": "25%"},
+      {"tramo": "3", "precio": 120000, "peso": "25%"}
+    ],
+    "nucleo": "30%",
+    "invalidacion_arriba": 87146,
+    "invalidacion_abajo_nota": "Cierre semanal por debajo del precio realizado (se toma el valor actual)"
+  },
+  "sol": {
+    "entrada": [
+      {"tramo": "1", "min": 85, "max": 90, "peso": "1/3"},
+      {"tramo": "2", "min": 72, "max": 78, "peso": "1/3"},
+      {"tramo": "3", "min": 58, "max": 65, "peso": "1/3"}
+    ]
+  },
+  "hype": {
+    "entrada": [
+      {"tramo": "1", "min": 70, "max": 75, "peso": "1/3"},
+      {"tramo": "2", "min": 60, "max": 65, "peso": "1/3"},
+      {"tramo": "3", "min": 50, "max": 55, "peso": "1/3"}
+    ],
+    "aviso": "Desbloqueo de unos 14,2 M de HYPE el 29/11/2026: no ejecutar el tramo 1 antes de verlo"
+  }
+}

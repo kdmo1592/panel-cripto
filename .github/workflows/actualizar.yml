@@ -1,0 +1,28 @@
+name: Actualizar panel
+
+on:
+  schedule:
+    - cron: "17 6 * * *"     # todos los días a las 06:17 UTC (07:17 en España en invierno)
+  workflow_dispatch:         # botón "Run workflow" para lanzarlo a mano
+
+permissions:
+  contents: write
+
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: python generar_datos.py
+      - name: Guardar data.json
+        run: |
+          git config user.name "robot-panel"
+          git config user.email "robot-panel@users.noreply.github.com"
+          git add data.json
+          git diff --cached --quiet || git commit -m "Datos actualizados $(date -u +%Y-%m-%d)"
+          git push
