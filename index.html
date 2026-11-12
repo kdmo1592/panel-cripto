@@ -90,7 +90,7 @@
 
     <h3>2. Tu plan hoy</h3>
     <p>Avisos con franja de color: <b>verde</b> = compra permitida ahora · <b>rojo</b> = venta que pide el plan · <b>ámbar</b> = vigilar, sin acción todavía · <b>gris</b> = información.</p>
-    <p>Columna <b>Estado</b> de las tablas de compra: «falta caer X%» = distancia hasta el tramo · <b>EN ZONA</b> = precio dentro del tramo · «por debajo de la zona» = ya más barato que el tramo. En la de venta: «falta subir X%» o <b>ALCANZADO</b>. El núcleo (30%) no se vende.</p>
+    <p>Columna <b>Estado</b> de las tablas de compra: «falta caer X%» = distancia hasta el tramo · <b>EN ZONA</b> = precio dentro del tramo · «por debajo de la zona» = ya más barato que el tramo. En SOL y HYPE, la columna «Se activa con» indica qué tramo de BTC tiene que tocarse antes de comprar. En la de venta: «falta subir X%» o <b>ALCANZADO</b>. El núcleo (30%) no se vende.</p>
 
     <h3>3. Valoración: ¿barato o caro?</h3>
     <p>Aquí <b>verde = barato o miedo (zona de compra)</b> y <b>rojo = caro o euforia (zona de venta)</b>. Cada tarjeta tiene un desplegable «Cómo leerlo» con sus umbrales.</p>
@@ -180,10 +180,12 @@ function tablaEntrada(titulo, filas, dec){
     let est = t.estado, cls = "";
     if (est==="EN ZONA"){cls="sube"; est="<b>EN ZONA</b>";}
     else if (est==="por encima"){est = `falta caer ${fmt.pct1(Math.abs(t.distancia))}`;}
-    else if (est==="por debajo"){cls="baja"; est = `por debajo de la zona (a ${fmt.pct1(Math.abs(t.distancia))})`;}
-    return `<tr><td>${t.tramo}</td><td class="num">${fmt.usd(t.min,dec)} – ${fmt.usd(t.max,dec)}</td><td class="num">${t.peso}</td><td class="${cls}">${est}</td></tr>`;
+    else if (est==="por debajo"){est = `por debajo de la zona (a ${fmt.pct1(Math.abs(t.distancia))})`;}
+    const act = t.activa_con ? `<td>${t.activa_con}${t.activado?' <b class="sube">✓ activado</b>':''}</td>` : "";
+    return `<tr><td>${t.tramo}</td><td class="num">${fmt.usd(t.min,dec)} – ${fmt.usd(t.max,dec)}</td><td class="num">${t.peso}</td><td class="${cls}">${est}</td>${act}</tr>`;
   }).join("");
-  return `<table><thead><tr><th>${titulo}</th><th class="num">Zona</th><th class="num">Peso</th><th>Estado</th></tr></thead><tbody>${rows}</tbody></table>`;
+  const hAct = filas.some(t=>t.activa_con) ? "<th>Se activa con</th>" : "";
+  return `<table><thead><tr><th>${titulo}</th><th class="num">Zona</th><th class="num">Peso</th><th>Estado</th>${hAct}</tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 function render(d){
@@ -205,6 +207,7 @@ function render(d){
         <tr><td>Núcleo</td><td class="num">no se vende</td><td class="num">${plan.btc.nucleo}</td><td></td></tr></tbody></table></div>`;
   h += `<div class="tablas" style="margin-top:12px">${tablaEntrada("Compra SOL", PE.sol, 2)}${tablaEntrada("Compra HYPE", PE.hype, 2)}</div>`;
   h += `<p class="mut">Tramo 4 de BTC (${plan.btc.reserva.peso}): ${plan.btc.reserva.regla.toLowerCase()}. ${plan.hype.aviso}.</p>`;
+  if (plan.regla_altcoins) h += `<p class="mut"><b>Regla de SOL y HYPE:</b> ${plan.regla_altcoins}</p>`;
 
   // --- Indicadores
   h += `<h2>Valoración: ¿barato o caro?</h2><div class="leyenda">Verde = zona de compra (barato, miedo) · Rojo = zona de venta (caro, euforia) · Neutral = sin señal clara.</div>`;

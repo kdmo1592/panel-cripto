@@ -479,16 +479,40 @@ def main():
     max_desde_plan = max((v["h"] for v in btc_d if v["t"] >= plan["inicio_plan"]), default=None) if btc_d else None
     if max_desde_plan and max_desde_plan >= 100000 and cierre_sem and sth_v and cierre_sem < sth_v:
         senales.append({"tipo": "venta", "texto": "Regla de deterioro: BTC superó 100.000 $ y ha cerrado la semana por debajo del coste STH. Vende el siguiente tramo pendiente."})
-    t1_btc = plan["btc"]["entrada"][0]
-    btc_t1_alcanzado = bool(btc_d) and min(v["l"] for v in btc_d if v["t"] >= plan["inicio_plan"]) <= t1_btc["max"]
+    # --- regla de altcoins: cada tramo se activa con el tramo SIGUIENTE de BTC
+    min_btc_plan = min((v["l"] for v in btc_d if v["t"] >= plan["inicio_plan"]), default=None) if btc_d else None
+    t2_btc, t3_btc = plan["btc"]["entrada"][1], plan["btc"]["entrada"][2]
+    # confirmación de suelo (tramo 4): alguna semana desde el inicio del plan cerró bajo la MM200 y la siguiente por encima
+    suelo_confirmado = False
+    for i in range(201, len(cierres_w)):
+        if semanas[i]["t"] < plan["inicio_plan"]:
+            continue
+        mm_i = sum(cierres_w[i - 199:i + 1]) / 200
+        mm_a = sum(cierres_w[i - 200:i]) / 200
+        if cierres_w[i - 1] < mm_a and cierres_w[i] > mm_i:
+            suelo_confirmado = True
+    fecha_limite_pasada = HOY.date() > date.fromisoformat(plan["fecha_limite_compras"])
+    disparadores = [
+        (min_btc_plan is not None and min_btc_plan <= t2_btc["max"], f"el tramo 2 de BTC ({miles(t2_btc['min'])}–{miles(t2_btc['max'])} $)"),
+        (min_btc_plan is not None and min_btc_plan <= t3_btc["max"], f"el tramo 3 de BTC ({miles(t3_btc['min'])}–{miles(t3_btc['max'])} $)"),
+        (suelo_confirmado, "la confirmación de suelo de BTC (tramo 4)"),
+    ]
+    precios_alt = {"sol": p_sol, "hype": p_hype}
     for nombre in ("sol", "hype"):
-        for t in plan_estado[nombre]:
-            if t["estado"] == "EN ZONA":
-                if btc_t1_alcanzado:
-                    senales.append({"tipo": "compra", "texto": f"{nombre.upper()} está en la zona de su tramo {t['tramo']} y BTC ya tocó su tramo 1: la compra está dentro del plan."})
+        for i, t in enumerate(plan_estado[nombre]):
+            activo, cuando = disparadores[i]
+            activo = activo or suelo_confirmado or fecha_limite_pasada
+            t["activado"] = activo
+            precio = precios_alt[nombre]
+            if precio is None:
+                continue
+            if activo:
+                if precio <= t["max"]:
+                    senales.append({"tipo": "compra", "texto": f"{nombre.upper()} tramo {t['tramo']} ACTIVADO y el precio está en su zona o por debajo: compra a mercado según el plan."})
                 else:
-                    senales.append({"tipo": "aviso", "texto": f"{nombre.upper()} está en la zona de su tramo {t['tramo']}, pero BTC aún no ha tocado su tramo 1 ({miles(t1_btc['min'])}–{miles(t1_btc['max'])} $). Según el plan, las altcoins esperan."})
-    t2_btc = plan["btc"]["entrada"][1]
+                    senales.append({"tipo": "compra", "texto": f"{nombre.upper()} tramo {t['tramo']} ACTIVADO: deja una orden limitada en su zona ({t['min']}–{t['max']} $)."})
+            elif precio <= t["max"]:
+                senales.append({"tipo": "aviso", "texto": f"{nombre.upper()} está en la zona de su tramo {t['tramo']} o por debajo, pero el tramo no se activa hasta que BTC toque {cuando}. Según el plan, espera."})
     if p_btc and p_btc <= t2_btc["max"]:
         senales.append({"tipo": "compra", "texto": f"BTC está en su tramo 2 o por debajo: según el plan, toca permutar un tercio de ETH, LINK y XRP a BTC (si no lo has hecho ya)."})
     dias_limite = (date.fromisoformat(plan["fecha_limite_compras"]) - HOY.date()).days

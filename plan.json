@@ -4,15 +4,46 @@
   "fecha_limite_compras": "2027-03-31",
   "btc": {
     "entrada": [
-      {"tramo": "1", "min": 68000, "max": 70000, "peso": "30%"},
-      {"tramo": "2", "min": 62000, "max": 65000, "peso": "30%"},
-      {"tramo": "3", "min": 55000, "max": 60000, "peso": "25%"}
+      {
+        "tramo": "1",
+        "min": 68000,
+        "max": 70000,
+        "peso": "30%"
+      },
+      {
+        "tramo": "2",
+        "min": 62000,
+        "max": 65000,
+        "peso": "30%"
+      },
+      {
+        "tramo": "3",
+        "min": 55000,
+        "max": 60000,
+        "peso": "25%"
+      }
     ],
-    "reserva": {"tramo": "4", "peso": "15%", "regla": "Cierre semanal por debajo de la media de 200 semanas y, la semana siguiente, cierre por encima"},
+    "reserva": {
+      "tramo": "4",
+      "peso": "15%",
+      "regla": "Cierre semanal por debajo de la media de 200 semanas y, la semana siguiente, cierre por encima"
+    },
     "salida": [
-      {"tramo": "1", "precio": 100000, "peso": "20%"},
-      {"tramo": "2", "precio": 110000, "peso": "25%"},
-      {"tramo": "3", "precio": 120000, "peso": "25%"}
+      {
+        "tramo": "1",
+        "precio": 100000,
+        "peso": "20%"
+      },
+      {
+        "tramo": "2",
+        "precio": 110000,
+        "peso": "25%"
+      },
+      {
+        "tramo": "3",
+        "precio": 120000,
+        "peso": "25%"
+      }
     ],
     "nucleo": "30%",
     "invalidacion_arriba": 87146,
@@ -20,17 +51,54 @@
   },
   "sol": {
     "entrada": [
-      {"tramo": "1", "min": 85, "max": 90, "peso": "1/3"},
-      {"tramo": "2", "min": 72, "max": 78, "peso": "1/3"},
-      {"tramo": "3", "min": 58, "max": 65, "peso": "1/3"}
+      {
+        "tramo": "1",
+        "min": 85,
+        "max": 90,
+        "peso": "1/3",
+        "activa_con": "BTC tramo 2"
+      },
+      {
+        "tramo": "2",
+        "min": 72,
+        "max": 78,
+        "peso": "1/3",
+        "activa_con": "BTC tramo 3"
+      },
+      {
+        "tramo": "3",
+        "min": 58,
+        "max": 65,
+        "peso": "1/3",
+        "activa_con": "Suelo BTC (tramo 4)"
+      }
     ]
   },
   "hype": {
     "entrada": [
-      {"tramo": "1", "min": 70, "max": 75, "peso": "1/3"},
-      {"tramo": "2", "min": 60, "max": 65, "peso": "1/3"},
-      {"tramo": "3", "min": 50, "max": 55, "peso": "1/3"}
+      {
+        "tramo": "1",
+        "min": 70,
+        "max": 75,
+        "peso": "1/3",
+        "activa_con": "BTC tramo 2"
+      },
+      {
+        "tramo": "2",
+        "min": 60,
+        "max": 65,
+        "peso": "1/3",
+        "activa_con": "BTC tramo 3"
+      },
+      {
+        "tramo": "3",
+        "min": 50,
+        "max": 55,
+        "peso": "1/3",
+        "activa_con": "Suelo BTC (tramo 4)"
+      }
     ],
     "aviso": "Desbloqueo de unos 14,2 M de HYPE el 29/11/2026: no ejecutar el tramo 1 antes de verlo"
-  }
+  },
+  "regla_altcoins": "Cada tramo de SOL y HYPE se activa cuando BTC toca su tramo siguiente: tramo 1 con el tramo 2 de BTC, tramo 2 con el tramo 3 de BTC, tramo 3 con la confirmación de suelo (tramo 4 de BTC). Activado: compra a mercado si la altcoin está en su zona o por debajo; si está por encima, orden limitada en la zona. Si se confirma el suelo de BTC o llega la fecha límite, se ejecutan todos los tramos pendientes."
 }
