@@ -1,14 +1,14 @@
 {
- "actualizado": "2026-11-12 14:23 UTC",
+ "actualizado": "2026-11-12 14:24 UTC",
  "precios": {
-  "BTC": 71956.36,
+  "BTC": 71926.43,
   "SOL": 80.63,
-  "HYPE": 69.502
+  "HYPE": 69.571
  },
  "cambios_7d": {
-  "BTC": -0.05430093387906976,
+  "BTC": -0.054694294147001665,
   "SOL": -0.09739169371991496,
-  "HYPE": -0.09256841445581787
+  "HYPE": -0.09166753707959052
  },
  "niveles": {
   "mm200": 67760.4812,
@@ -23,7 +23,7 @@
   {
    "clave": "mm200",
    "nombre": "Precio / media de 200 semanas",
-   "valor": 1.0619222107885504,
+   "valor": 1.0614805079040672,
    "formato": "x",
    "color": "verde",
    "detalle": "Media de 200 semanas: 67.760 $",
@@ -33,7 +33,7 @@
   {
    "clave": "sth",
    "nombre": "Precio / coste de compradores recientes (STH)",
-   "valor": 0.9479060044900032,
+   "valor": 0.9475117262536611,
    "formato": "x",
    "color": "ambar",
    "detalle": "Coste STH: 75.911 $",
@@ -63,7 +63,7 @@
   {
    "clave": "funding",
    "nombre": "Funding de BTC (anualizado, Hyperliquid)",
-   "valor": -0.085073616,
+   "valor": -0.086831748,
    "formato": "pct",
    "color": "verde",
    "detalle": "Base neutral en Hyperliquid ≈ 11% anual. Muy por encima: exceso de apalancamiento comprador",
@@ -105,7 +105,7 @@
   {
    "clave": "solbtc",
    "nombre": "SOL frente a BTC (30 días)",
-   "valor": -0.1276400374512685,
+   "valor": -0.12727703133961943,
    "formato": "pct",
    "color": "rojo",
    "detalle": "Positivo = SOL mejor que BTC; negativo = peor",
@@ -115,7 +115,7 @@
   {
    "clave": "hypebtc",
    "nombre": "HYPE frente a BTC (30 días)",
-   "valor": -0.014546627962958247,
+   "valor": -0.013157818732159599,
    "formato": "pct",
    "color": "ambar",
    "detalle": "Positivo = HYPE mejor que BTC; negativo = peor",
@@ -245,7 +245,7 @@
     "max": 70000,
     "peso": "30%",
     "estado": "por encima",
-    "distancia": -0.027188145703868294
+    "distancia": -0.02678333958740886
    },
    {
     "tramo": "2",
@@ -253,7 +253,7 @@
     "max": 65000,
     "peso": "30%",
     "estado": "por encima",
-    "distancia": -0.09667470672502054
+    "distancia": -0.09629881533116535
    },
    {
     "tramo": "3",
@@ -261,7 +261,7 @@
     "max": 60000,
     "peso": "25%",
     "estado": "por encima",
-    "distancia": -0.1661612677461728
+    "distancia": -0.16581429107492185
    }
   ],
   "sol": [
@@ -304,7 +304,7 @@
     "peso": "1/3",
     "activa_con": "BTC tramo 2",
     "estado": "por debajo",
-    "distancia": 0.007165261431325787,
+    "distancia": 0.006166362421123672,
     "activado": false
    },
    {
@@ -314,7 +314,7 @@
     "peso": "1/3",
     "activa_con": "BTC tramo 3",
     "estado": "por encima",
-    "distancia": -0.06477511438519745,
+    "distancia": -0.06570266346609932,
     "activado": false
    },
    {
@@ -324,7 +324,7 @@
     "peso": "1/3",
     "activa_con": "Suelo BTC (tramo 4)",
     "estado": "por encima",
-    "distancia": -0.20865586601824404,
+    "distancia": -0.20944071524054564,
     "activado": false
    }
   ],
@@ -333,21 +333,21 @@
     "tramo": "1",
     "precio": 100000,
     "peso": "20%",
-    "distancia": 0.3897312204230452,
+    "distancia": 0.3903095148751301,
     "estado": "pendiente"
    },
    {
     "tramo": "2",
     "precio": 110000,
     "peso": "25%",
-    "distancia": 0.5287043424653499,
+    "distancia": 0.5293404663626431,
     "estado": "pendiente"
    },
    {
     "tramo": "3",
     "precio": 120000,
     "peso": "25%",
-    "distancia": 0.6676774645076544,
+    "distancia": 0.6683714178501563,
     "estado": "pendiente"
    }
   ]
@@ -355,11 +355,11 @@
  "senales": [
   {
    "tipo": "aviso",
-   "texto": "SOL está en la zona de su tramo 1 o por debajo, pero el tramo no se activa hasta que BTC toque el tramo 2 de BTC (62.000–65.000 $). Según el plan, espera."
+   "texto": "SOL está en la zona de su tramo 1 o por debajo, pero el tramo no se activa hasta que BTC toque su tramo 2 (62.000–65.000 $). Según el plan, espera."
   },
   {
    "tipo": "aviso",
-   "texto": "HYPE está en la zona de su tramo 1 o por debajo, pero el tramo no se activa hasta que BTC toque el tramo 2 de BTC (62.000–65.000 $). Según el plan, espera."
+   "texto": "HYPE está en la zona de su tramo 1 o por debajo, pero el tramo no se activa hasta que BTC toque su tramo 2 (62.000–65.000 $). Según el plan, espera."
   },
   {
    "tipo": "info",
@@ -2167,7 +2167,7 @@
   {
    "clave": "rp_cap",
    "nombre": "Precio / precio realizado",
-   "valor": 1.3338313518868106,
+   "valor": 1.3332765493320122,
    "formato": "x",
    "cumple": false,
    "umbral": "≤ 1,05× (toca el coste medio de todo el mercado)"
@@ -2176,33 +2176,33 @@
  "rotacion": [
   {
    "activo": "ETH",
-   "precio": 1991.23,
-   "cambio_7d": -0.1102676038087409,
-   "minimo": 1988.05,
+   "precio": 1991.83,
+   "cambio_7d": -0.1099995084919193,
+   "minimo": 1987.58,
    "fecha_minimo": "2026-11-12",
-   "rebote": 0.0015995573551972342,
-   "objetivo_rebote": 2982.075,
-   "vs_btc_30d": -0.07863867280074988
+   "rebote": 0.0021382787107939727,
+   "objetivo_rebote": 2981.37,
+   "vs_btc_30d": -0.07797753494621196
   },
   {
    "activo": "LINK",
-   "precio": 9.786,
-   "cambio_7d": -0.08345040741781395,
-   "minimo": 9.773,
+   "precio": 9.791,
+   "cambio_7d": -0.08298211107989129,
+   "minimo": 9.77,
    "fecha_minimo": "2026-11-12",
-   "rebote": 0.001330195436406445,
-   "objetivo_rebote": 14.6595,
-   "vs_btc_30d": -0.12209648264733741
+   "rebote": 0.002149437052200609,
+   "objetivo_rebote": 14.655,
+   "vs_btc_30d": -0.12128243235828684
   },
   {
    "activo": "XRP",
-   "precio": 1.0207,
-   "cambio_7d": -0.15448972829688545,
-   "minimo": 1.0199,
+   "precio": 1.0217,
+   "cambio_7d": -0.1536613651424784,
+   "minimo": 1.0193,
    "fecha_minimo": "2026-11-12",
-   "rebote": 0.0007843906265319056,
-   "objetivo_rebote": 1.5298500000000002,
-   "vs_btc_30d": -0.1364093786845657
+   "rebote": 0.0023545570489551526,
+   "objetivo_rebote": 1.52895,
+   "vs_btc_30d": -0.1352035927679145
   }
  ],
  "diario_btc": [
@@ -4604,7 +4604,7 @@
    "2026-11-12",
    74217,
    71897,
-   71956
+   71926
   ]
  ],
  "historial": [
@@ -4636,7 +4636,7 @@
    "semana": "2026-11-08",
    "btc": 74851.44,
    "sol": 80.63,
-   "hype": 69.502,
+   "hype": 69.571,
    "mm200": 67760.4812,
    "sth": 75910.86,
    "mvrvz": 0.7153,
