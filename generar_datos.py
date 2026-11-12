@@ -233,6 +233,30 @@ def ingresos_hyperliquid():
             "variacion": ult30 / prev30 - 1 if prev30 else None}
 
 
+@fuente("DefiLlama stablecoins")
+def stablecoins():
+    r = get("https://stablecoins.llama.fi/stablecoincharts/all")
+    serie = sorted((int(x["date"]), float(x["totalCirculatingUSD"]["peggedUSD"]))
+                   for x in r.json() if (x.get("totalCirculatingUSD") or {}).get("peggedUSD"))
+    if len(serie) < 40:
+        raise ValueError("serie demasiado corta")
+    return {"total": serie[-1][1], "var30": serie[-1][1] / serie[-31][1] - 1}
+
+
+def peso_num(p):
+    p = str(p)
+    if "%" in p:
+        return float(p.replace("%", "")) / 100
+    if "/" in p:
+        a, b = p.split("/")
+        return float(a) / float(b)
+    return 0.0
+
+
+def media(xs):
+    return sum(xs) / len(xs) if xs else None
+
+
 # ---------------------------------------------------------------- cálculos
 def semaforo(valor, verde, rojo, invertido=False):
     """verde/rojo son umbrales. Sin invertir: valor <= verde -> verde; >= rojo -> rojo."""
@@ -306,6 +330,8 @@ def main():
     fng = miedo_codicia()
     dom = dominancia()
     ing_hype = ingresos_hyperliquid()
+    stables = stablecoins()
+    nasdaq = serie_fred("NASDAQCOM", desde="2025-01-01")
 
     # --- precios
     p_btc = btc_d[-1]["c"] if btc_d else (fund.get("BTC") or {}).get("precio")
@@ -359,7 +385,31 @@ def main():
 
     senales = []
 
-    # --- señales de capitulación que dice usar Plan BTC (calculables gratis)
+    # --- métricas añadidas en la revisión del 12 nov 2026
+    cierres_d = [v["c"] for v in (btc_d or [])]
+    mm200d = media(cierres_d[-200:]) if len(cierres_d) >= 200 else None
+    mayer = p_btc / mm200d if p_btc and mm200d else None
+    mm111d = media(cierres_d[-111:]) if len(cierres_d) >= 111 else None
+    mm350d = media(cierres_d[-350:]) if len(cierres_d) >= 350 else None
+    pi_ratio = mm111d / (2 * mm350d) if mm111d and mm350d else None
+    ath = max((x["h"] for x in btc_w), default=None) if btc_w else None
+    drawdown = p_btc / ath - 1 if p_btc and ath else None
+    # STH-MVRV (precio / coste de compradores recientes) frente a su banda de 90 días
+    sth_mvrv_hoy = sth_banda = None
+    if sth and btc_d:
+        serie_sm = [v["c"] / valor_en(sth, v["t"]) for v in btc_d[-91:] if valor_en(sth, v["t"])]
+        if len(serie_sm) >= 60:
+            previos = serie_sm[:-1]
+            m = media(previos)
+            desv = (sum((x - m) ** 2 for x in previos) / len(previos)) ** 0.5
+            sth_mvrv_hoy, sth_banda = serie_sm[-1], m - desv
+    cierres_nq = [v for _, v in (nasdaq or [])]
+    nq_mm200 = media(cierres_nq[-200:]) if len(cierres_nq) >= 200 else None
+    nq_ratio = cierres_nq[-1] / nq_mm200 if nq_mm200 else None
+    nq_dd = cierres_nq[-1] / max(cierres_nq) - 1 if cierres_nq else None
+    fng_v = fng["valor"] if fng else None
+
+    # --- señales de suelo: las de Plan BTC calculables gratis + tres añadidas
     rsi_sem = rsi(cierres_w) if len(cierres_w) > 15 else None
     vols_w = [x.get("v") for x in semanas if x.get("v") is not None]
     vol_ratio = (vols_w[-1] / (sum(vols_w[-21:-1]) / 20)) if len(vols_w) >= 21 else None
@@ -374,7 +424,33 @@ def main():
          "cumple": mz is not None and mz <= 0, "umbral": "≤ 0 (mercado en pérdidas)"},
         {"clave": "rp_cap", "nombre": "Precio / precio realizado", "valor": rp_ratio, "formato": "x",
          "cumple": rp_ratio is not None and rp_ratio <= 1.05, "umbral": "≤ 1,05× (toca el coste medio de todo el mercado)"},
+        {"clave": "sthb_cap", "nombre": "Precio / coste STH frente a su banda de 90 días", "valor": sth_mvrv_hoy, "formato": "x",
+         "cumple": sth_mvrv_hoy is not None and sth_mvrv_hoy < sth_banda,
+         "umbral": (f"< {sth_banda:.2f}× (media de 90 días menos una desviación)".replace(".", ",") if sth_banda else "por debajo de su banda de 90 días")},
+        {"clave": "mayer_cap", "nombre": "Múltiplo de Mayer (precio / media de 200 días)", "valor": mayer, "formato": "x",
+         "cumple": mayer is not None and mayer <= 0.8, "umbral": "≤ 0,80×"},
+        {"clave": "fng_cap", "nombre": "Miedo y codicia", "valor": fng_v, "formato": "n0",
+         "cumple": fng_v is not None and fng_v <= 20, "umbral": "≤ 20 (miedo extremo)"},
     ]
+    n_suelo = sum(1 for c in capitulacion if c["cumple"])
+
+    r_mm200_t = p_btc / mm200 if p_btc and mm200 else None
+    f_btc_t = (fund.get("BTC") or {}).get("funding_anual")
+    techo = [
+        {"clave": "mayer_t", "nombre": "Múltiplo de Mayer", "valor": mayer, "formato": "x",
+         "cumple": mayer is not None and mayer >= 2.4, "umbral": "≥ 2,40×"},
+        {"clave": "pi_t", "nombre": "Pi Cycle (media de 111 días / 2 × media de 350 días)", "valor": pi_ratio, "formato": "x",
+         "cumple": pi_ratio is not None and pi_ratio >= 1, "umbral": "≥ 1,00× (cruce)"},
+        {"clave": "mvrvz_t", "nombre": "MVRV Z-Score", "valor": mz, "formato": "n2",
+         "cumple": mz is not None and mz >= 3, "umbral": "≥ 3"},
+        {"clave": "mm200_t", "nombre": "Precio / media de 200 semanas", "valor": r_mm200_t, "formato": "x",
+         "cumple": r_mm200_t is not None and r_mm200_t >= 2, "umbral": "≥ 2,00×"},
+        {"clave": "fng_t", "nombre": "Miedo y codicia", "valor": fng_v, "formato": "n0",
+         "cumple": fng_v is not None and fng_v >= 80, "umbral": "≥ 80 (codicia extrema)"},
+        {"clave": "fund_t", "nombre": "Funding de BTC (anualizado)", "valor": f_btc_t, "formato": "pct",
+         "cumple": f_btc_t is not None and f_btc_t >= 0.30, "umbral": "≥ 30 %"},
+    ]
+    n_techo = sum(1 for c in techo if c["cumple"])
 
     # --- rotación de ETH, LINK y XRP: rebote desde el mínimo marcado desde el inicio del plan
     rotacion = []
@@ -427,6 +503,14 @@ def main():
             semaforo(f_btc, 0.05, 0.30),
             "Base neutral en Hyperliquid ≈ 11% anual. Muy por encima: exceso de apalancamiento comprador",
             "https://app.hyperliquid.xyz/fundingComparison"),
+        ind("mayer", "Múltiplo de Mayer (precio / media de 200 días)", mayer, "x",
+            semaforo(mayer, 0.8, 2.4),
+            f"Media de 200 días: {miles(mm200d)} $" if mm200d else "sin dato",
+            "https://data-api.binance.vision"),
+        ind("dd", "Caída desde el máximo histórico", drawdown, "pct",
+            semaforo(drawdown, -0.5, -0.15),
+            f"Máximo: {miles(ath)} $. Suelos de mercados bajistas anteriores: entre −77% y −84%" if ath else "sin dato",
+            "https://data-api.binance.vision"),
     ]
     fondo = [
         ind("liquidez", "Liquidez neta de la Fed (cambio en 13 semanas)", liq_13, "pct",
@@ -451,6 +535,15 @@ def main():
             (f"Últimos 30 días: {ing_hype['ult30'] / 1e6:.1f} M$".replace(".", ",")
              if ing_hype else "sin dato"),
             "https://defillama.com/protocol/hyperliquid"),
+        ind("stables", "Stablecoins en circulación (cambio en 30 días)",
+            stables["var30"] if stables else None, "pct",
+            semaforo(stables["var30"] if stables else None, 0.02, -0.01, invertido=True),
+            (f"Total: {stables['total'] / 1e9:.0f} mil M$" if stables else "sin dato"),
+            "https://defillama.com/stablecoins"),
+        ind("nasdaq", "Nasdaq / su media de 200 sesiones", nq_ratio, "x",
+            semaforo(nq_ratio, 1.02, 0.97, invertido=True),
+            (f"A {nq_dd * 100:.1f}% de su máximo desde 2025".replace(".", ",") if nq_dd is not None else "sin dato"),
+            "https://fred.stlouisfed.org/series/NASDAQCOM", nasdaq[-1][0] if nasdaq else None),
     ]
 
     # --- plan: estado de tramos
@@ -465,6 +558,37 @@ def main():
         d = t["precio"] / p_btc - 1 if p_btc else None
         plan_estado["salida_btc"].append({**t, "distancia": d,
                                           "estado": "ALCANZADO" if d is not None and d <= 0 else "pendiente"})
+
+    # --- posiciones: tramos marcados como ejecutados en plan.json
+    posiciones = {}
+    for nombre in ("btc", "sol", "hype"):
+        tramos = list(plan[nombre]["entrada"]) + ([plan["btc"]["reserva"]] if nombre == "btc" else [])
+        ej = [t for t in tramos if t.get("ejecutado")]
+        w = sum(peso_num(t["peso"]) for t in ej)
+        if ej and w:
+            med = sum(peso_num(t["peso"]) * t["ejecutado"]["precio"] for t in ej) / w
+            precio = {"btc": p_btc, "sol": p_sol, "hype": p_hype}[nombre]
+            posiciones[nombre] = {"desplegado": w, "medio": med, "x2": 2 * med,
+                                  "resultado": precio / med - 1 if precio else None}
+    for t in plan_estado["btc"]:
+        if not t.get("ejecutado") and p_btc and p_btc <= t["max"]:
+            senales.append({"tipo": "compra", "texto": f"BTC tramo {t['tramo']} ({miles(t['min'])}–{miles(t['max'])} $): el precio está en la zona o por debajo. Compra según el plan."})
+    for nombre in ("sol", "hype"):
+        pos = posiciones.get(nombre)
+        precio = {"sol": p_sol, "hype": p_hype}[nombre]
+        if pos and precio and precio >= pos["x2"]:
+            senales.append({"tipo": "venta", "texto": f"{nombre.upper()} ha doblado tu precio medio: vende la mitad y recuperas lo invertido."})
+
+    # --- confluencia de señales de suelo y de techo
+    conf_fecha = anterior.get("confluencia_suelo")
+    if conf_fecha and conf_fecha < plan["inicio_plan"]:
+        conf_fecha = None
+    if n_suelo >= 4 and not conf_fecha:
+        conf_fecha = HOY.date().isoformat()
+    if conf_fecha and not plan["btc"]["reserva"].get("ejecutado"):
+        senales.append({"tipo": "compra", "texto": f"Tramo 4 (reserva) ACTIVADO por confluencia: 4 o más señales de suelo se alinearon el {conf_fecha}."})
+    if n_techo >= 3:
+        senales.append({"tipo": "venta", "texto": f"{n_techo} de {len(techo)} señales de techo alineadas: vende el siguiente tramo pendiente aunque no haya llegado a su precio."})
 
     # --- señales del plan
     if cierre_sem and cierre_sem_ant and mm200 and mm200_ant:
@@ -504,7 +628,7 @@ def main():
             activo = activo or suelo_confirmado or fecha_limite_pasada
             t["activado"] = activo
             precio = precios_alt[nombre]
-            if precio is None:
+            if precio is None or t.get("ejecutado"):
                 continue
             if activo:
                 if precio <= t["max"]:
@@ -560,6 +684,9 @@ def main():
         "senales": senales,
         "grafico": grafico,
         "capitulacion": capitulacion,
+        "techo": techo,
+        "posiciones": posiciones,
+        "confluencia_suelo": conf_fecha,
         "rotacion": rotacion,
         "diario_btc": [[v["t"], round(v["h"]), round(v["l"]), round(v["c"])] for v in (btc_d or [])[-400:]],
         "historial": historial,

@@ -90,7 +90,7 @@
 
     <h3>2. Tu plan hoy</h3>
     <p>Avisos con franja de color: <b>verde</b> = compra permitida ahora · <b>rojo</b> = venta que pide el plan · <b>ámbar</b> = vigilar, sin acción todavía · <b>gris</b> = información.</p>
-    <p>Columna <b>Estado</b> de las tablas de compra: «falta caer X%» = distancia hasta el tramo · <b>EN ZONA</b> = precio dentro del tramo · «por debajo de la zona» = ya más barato que el tramo. En SOL y HYPE, la columna «Se activa con» indica qué tramo de BTC tiene que tocarse antes de comprar. En la de venta: «falta subir X%» o <b>ALCANZADO</b>. El núcleo (30%) no se vende.</p>
+    <p>Columna <b>Estado</b> de las tablas de compra: «falta caer X%» = distancia hasta el tramo · <b>EN ZONA</b> = precio dentro del tramo · «por debajo de la zona» = ya más barato que el tramo. En SOL y HYPE, la columna «Se activa con» indica qué tramo de BTC tiene que tocarse antes de comprar. En la de venta: «falta subir X%» o <b>ALCANZADO</b>. El núcleo no se vende.</p>
 
     <h3>3. Valoración: ¿barato o caro?</h3>
     <p>Aquí <b>verde = barato o miedo (zona de compra)</b> y <b>rojo = caro o euforia (zona de venta)</b>. Cada tarjeta tiene un desplegable «Cómo leerlo» con sus umbrales.</p>
@@ -111,8 +111,12 @@
       <li><b>Ingresos de Hyperliquid</b>: financian las recompras de HYPE; si caen, se debilita su soporte fundamental.</li>
     </ul>
 
-    <h3>5. ¿Capitulación? Las señales que usa Plan BTC</h3>
-    <p>Las 4 señales que él dice esperar y que se pueden calcular gratis, con el número de las que están alineadas. Sirve para comprobarlo por ti mismo y para auditar si él compra cuando su propio método lo indica. Las otras dos (pérdidas realizadas y liquidaciones) se miran a mano en los enlaces de debajo.</p>
+    <h3>5. Señales de suelo y de techo</h3>
+    <p><b>Suelo (7 señales):</b> las cuatro de Plan BTC que se pueden calcular gratis y tres añadidas (banda del coste STH, múltiplo de Mayer y miedo extremo). Ninguna es fiable sola; lo que cuenta es la <b>confluencia</b>. Con 4 alineadas se activa el tramo 4 de BTC. También sirve para auditar si Plan BTC compra cuando su propio método lo indica.</p>
+    <p><b>Techo (6 señales):</b> el espejo para la salida. Con 3 alineadas se vende el siguiente tramo pendiente aunque el precio no haya llegado a su nivel.</p>
+    <p>El <b>parte de situación</b>, arriba del plan, resume ambas cuentas y tus posiciones.</p>
+    <h3>Cómo marcar una compra</h3>
+    <p>En el repositorio, edita <code>plan.json</code> y añade al tramo comprado <code>"ejecutado": {"fecha": "2026-11-20", "precio": 69500}</code>. El panel dejará de avisarte de ese tramo y calculará tu precio medio y el x2 de cada altcoin. No pongas importes en euros: el repositorio es público.</p>
 
     <h3>6. ETH, LINK y XRP</h3>
     <p><b>Mínimo desde el inicio</b>: el precio más bajo desde que empezó el plan. <b>Precio para vender 1/3</b>: ese mínimo + 50%. Baja mientras la moneda siga marcando mínimos nuevos y se queda fijo cuando deja de caer. Tu precio medio de compra no aparece porque el repositorio es público; está en el documento del plan.</p>
@@ -128,7 +132,7 @@
     </ul>
 
     <h3>8. Histórico semanal</h3>
-    <p>Una fila por semana, con los semáforos como puntos de color en el orden de las tarjetas (5 de valoración y luego 6 de viento de fondo). Sirve para ver la <b>tendencia</b>, por ejemplo si poco a poco se van poniendo en verde.</p>
+    <p>Una fila por semana, con los semáforos como puntos de color en el orden de las tarjetas (7 de valoración y luego 8 de viento de fondo). Sirve para ver la <b>tendencia</b>, por ejemplo si poco a poco se van poniendo en verde.</p>
 
     <h3>Si algo falla</h3>
     <p>Si una fuente no responde, al final aparece en rojo y esa tarjeta muestra «sin dato»; se reintenta al día siguiente. Para datos al momento: en el repositorio, <b>Actions → Actualizar panel → Run workflow</b>.</p>
@@ -161,6 +165,10 @@ const AYUDA = {
   dom:"Porcentaje del valor total del mercado cripto que es BTC. Si sube, el dinero se refugia en BTC y las altcoins lo hacen peor. Si baja con fuerza, suele ser fase de euforia en altcoins. Siempre en neutral: es contexto, no señal.",
   solbtc:"Rendimiento de SOL frente a BTC en 30 días. Si SOL cae más que BTC en las caídas, sus tramos de compra llegarán antes. Verde ≥ +5 % · Rojo ≤ −5 %.",
   hypebtc:"Rendimiento de HYPE frente a BTC en 30 días. Verde ≥ +5 % · Rojo ≤ −5 %.",
+  mayer:"Precio dividido por su media de 200 días. Es de las métricas con historial más largo y limpio: por debajo de 0,8× ha estado menos del 15 % del tiempo y ha coincidido con zonas de suelo; por encima de 2,4×, con techos. Verde ≤ 0,8× · Rojo ≥ 2,4×.",
+  dd:"Cuánto ha caído el precio desde su máximo histórico. Da perspectiva: los mercados bajistas anteriores tocaron fondo entre −77 % y −84 %, aunque cada ciclo ha sido menos profundo. Verde ≤ −50 % · Rojo ≥ −15 %.",
+  stables:"Dinero en stablecoins (USDT, USDC…): es la pólvora seca que puede entrar a comprar. Si crece, hay capital nuevo llegando al mercado; si se contrae, está saliendo. Verde ≥ +2 % · Rojo ≤ −1 % en 30 días.",
+  nasdaq:"BTC se mueve con la bolsa tecnológica. Si el Nasdaq está por debajo de su media de 200 sesiones, el mercado está en modo de aversión al riesgo y BTC rara vez sube con fuerza. Verde ≥ 1,02× · Rojo ≤ 0,97×.",
   inghype:"Ingresos del protocolo Hyperliquid (comisiones). Financian las recompras de HYPE: si caen, el soporte fundamental del precio se debilita. Verde ≥ +10 % · Rojo ≤ −10 %.",
 };
 
@@ -178,6 +186,7 @@ function tarjeta(i){
 function tablaEntrada(titulo, filas, dec){
   const rows = filas.map(t=>{
     let est = t.estado, cls = "";
+    if (t.ejecutado){ return `<tr><td>${t.tramo}</td><td class="num">${fmt.usd(t.min,dec)} – ${fmt.usd(t.max,dec)}</td><td class="num">${t.peso}</td><td class="sube"><b>✓ comprado</b> a ${fmt.usd(t.ejecutado.precio,dec)} <span class="mut">(${t.ejecutado.fecha||""})</span></td>${t.activa_con?`<td>${t.activa_con}</td>`:""}</tr>`; }
     if (est==="EN ZONA"){cls="sube"; est="<b>EN ZONA</b>";}
     else if (est==="por encima"){est = `falta caer ${fmt.pct1(Math.abs(t.distancia))}`;}
     else if (est==="por debajo"){est = `por debajo de la zona (a ${fmt.pct1(Math.abs(t.distancia))})`;}
@@ -200,6 +209,12 @@ function render(d){
 
   // --- Plan
   h += `<h2>Tu plan hoy</h2>`;
+  if (d.capitulacion && d.techo){
+    const ns = d.capitulacion.filter(c=>c.cumple).length, nt = d.techo.filter(c=>c.cumple).length;
+    const pos = d.posiciones||{};
+    const lin = ["btc","sol","hype"].map(k=> pos[k] ? `${k.toUpperCase()}: ${fmt.pct1(pos[k].desplegado)} desplegado, medio ${fmt.usd(pos[k].medio, k==="btc"?0:2)} (${fmt.pct(pos[k].resultado)})${k!=="btc"?`, x2 en ${fmt.usd(pos[k].x2,2)}`:""}` : `${k.toUpperCase()}: sin comprar`).join(" · ");
+    h += `<div class="senal info"><b>Parte de situación.</b> Señales de suelo: <b>${ns} de ${d.capitulacion.length}</b> (el tramo 4 se activa con 4) · Señales de techo: <b>${nt} de ${d.techo.length}</b> (con 3 se vende el siguiente tramo).<br>${lin}</div>`;
+  }
   h += d.senales.map(s=>`<div class="senal ${s.tipo}">${s.texto}</div>`).join("");
   h += `<div class="tablas">${tablaEntrada("Compra BTC", PE.btc, 0)}`;
   const salida = PE.salida_btc.map(t=>`<tr><td>${t.tramo}</td><td class="num">${fmt.usd(t.precio)}</td><td class="num">${t.peso}</td><td>${t.estado==="ALCANZADO"?"<b class='sube'>ALCANZADO</b>":"falta subir "+fmt.pct1(t.distancia)}</td></tr>`).join("");
@@ -207,7 +222,7 @@ function render(d){
         <tr><td>Núcleo</td><td class="num">no se vende</td><td class="num">${plan.btc.nucleo}</td><td></td></tr></tbody></table></div>`;
   h += `<div class="tablas" style="margin-top:12px">${tablaEntrada("Compra SOL", PE.sol, 2)}${tablaEntrada("Compra HYPE", PE.hype, 2)}</div>`;
   h += `<p class="mut">Tramo 4 de BTC (${plan.btc.reserva.peso}): ${plan.btc.reserva.regla.toLowerCase()}. ${plan.hype.aviso}.</p>`;
-  if (plan.regla_altcoins) h += `<p class="mut"><b>Regla de SOL y HYPE:</b> ${plan.regla_altcoins}</p>`;
+  if (plan.regla_altcoins) h += `<p class="mut"><b>Regla de SOL y HYPE:</b> ${plan.regla_altcoins} ${plan.salida_altcoins||""}</p>`;
 
   // --- Indicadores
   h += `<h2>Valoración: ¿barato o caro?</h2><div class="leyenda">Verde = zona de compra (barato, miedo) · Rojo = zona de venta (caro, euforia) · Neutral = sin señal clara.</div>`;
@@ -218,10 +233,15 @@ function render(d){
   // --- Señales de capitulación (las que dice usar Plan BTC)
   if (d.capitulacion){
     const n = d.capitulacion.filter(c=>c.cumple).length;
-    h += `<h2>¿Capitulación? Las señales que usa Plan BTC</h2><div class="leyenda">Las que se pueden calcular con datos gratuitos. Él dice que comprará cuando se alineen; aquí puedes comprobar por ti mismo si lo están. Alineadas: <b>${n} de ${d.capitulacion.length}</b>.</div>`;
-    h += `<table><thead><tr><th>Señal</th><th class="num">Valor</th><th>Umbral</th><th>Estado</th></tr></thead><tbody>` +
-      d.capitulacion.map(c=>`<tr><td>${c.nombre}</td><td class="num">${(fmt[c.formato]||fmt.n2)(c.valor)}</td><td>${c.umbral}</td><td>${c.valor==null?'<span class="chip gris">sin dato</span>':(c.cumple?'<span class="chip verde">✓ cumple</span>':'<span class="chip gris">✗ aún no</span>')}</td></tr>`).join("") +
-      `</tbody></table><p class="mut">Faltan dos que no tienen fuente gratuita fiable: el pico de pérdidas realizadas y el pico de liquidaciones en futuros. Míralas en <a href="https://charts.bgeometrics.com/" target="_blank" rel="noopener">BGeometrics</a> y <a href="https://www.coinglass.com/es/LiquidationData" target="_blank" rel="noopener">CoinGlass</a>.</p>`;
+    const fila = c=>`<tr><td>${c.nombre}</td><td class="num">${(fmt[c.formato]||fmt.n2)(c.valor)}</td><td>${c.umbral}</td><td>${c.valor==null?'<span class="chip gris">sin dato</span>':(c.cumple?'<span class="chip verde">✓ cumple</span>':'<span class="chip gris">✗ aún no</span>')}</td></tr>`;
+    h += `<h2>Señales de suelo: ¿hay capitulación?</h2><div class="leyenda">Las cuatro primeras son las que dice usar Plan BTC y se pueden calcular gratis; las tres últimas se añadieron en la revisión del plan. Ninguna vale sola: lo que cuenta es cuántas coinciden. Alineadas: <b>${n} de ${d.capitulacion.length}</b>. Con 4 se activa el tramo 4 de BTC.</div>`;
+    h += `<table><thead><tr><th>Señal</th><th class="num">Valor</th><th>Umbral</th><th>Estado</th></tr></thead><tbody>` + d.capitulacion.map(fila).join("") +
+      `</tbody></table><p class="mut">Dos señales de Plan BTC no tienen fuente gratuita fiable: el pico de pérdidas realizadas y el de liquidaciones en futuros. Míralas en <a href="https://charts.bgeometrics.com/" target="_blank" rel="noopener">BGeometrics</a> y <a href="https://www.coinglass.com/es/LiquidationData" target="_blank" rel="noopener">CoinGlass</a>.</p>`;
+    if (d.techo){
+      const nt = d.techo.filter(c=>c.cumple).length;
+      h += `<h2>Señales de techo: ¿hay euforia?</h2><div class="leyenda">Para la salida. Alineadas: <b>${nt} de ${d.techo.length}</b>. Con 3 se vende el siguiente tramo pendiente aunque el precio no haya llegado a su nivel.</div>`;
+      h += `<table><thead><tr><th>Señal</th><th class="num">Valor</th><th>Umbral</th><th>Estado</th></tr></thead><tbody>` + d.techo.map(fila).join("") + `</tbody></table>`;
+    }
   }
 
   // --- Rotación ETH, LINK, XRP
@@ -239,7 +259,7 @@ function render(d){
         <div class="graf"><canvas id="graf"></canvas></div>`;
 
   // --- Histórico
-  const claves = ["mm200","sth","mvrvz","fng","funding","liquidez","m2","dom","solbtc","hypebtc","inghype"];
+  const claves = ["mm200","sth","mvrvz","fng","funding","mayer","dd","liquidez","m2","dom","solbtc","hypebtc","inghype","stables","nasdaq"];
   const hist = [...d.historial].reverse().slice(0,26).map(r=>`<tr><td>${r.semana}</td><td class="num">${fmt.usd(r.btc)}</td><td class="num">${fmt.usd(r.sol,2)}</td><td class="num">${fmt.usd(r.hype,2)}</td><td class="num">${fmt.usd(r.sth)}</td><td class="num">${fmt.n0(r.fng)}</td><td>${claves.map(k=>`<span class="punto ${(r.colores||{})[k]||"gris"}" title="${k}"></span>`).join("")}</td></tr>`).join("");
   h += `<h2>Histórico semanal</h2><div class="leyenda">Una fila por semana cerrada (domingo). Los puntos son los semáforos, en el orden de las tarjetas.</div>
         <table class="hist"><thead><tr><th>Semana</th><th class="num">BTC</th><th class="num">SOL</th><th class="num">HYPE</th><th class="num">Coste STH</th><th class="num">Miedo/codicia</th><th>Semáforos</th></tr></thead><tbody>${hist}</tbody></table>`;

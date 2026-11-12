@@ -1,5 +1,5 @@
 {
-  "_nota": "Niveles del plan de inversión. Sin importes: el repositorio es público. Cambia aquí los niveles si cambias el plan.",
+  "_nota": "Niveles del plan de inversión. Sin importes: el repositorio es público. Para marcar un tramo como comprado, añádele \"ejecutado\": {\"fecha\": \"2026-11-20\", \"precio\": 69500}.",
   "inicio_plan": "2026-11-08",
   "fecha_limite_compras": "2027-03-31",
   "btc": {
@@ -26,26 +26,21 @@
     "reserva": {
       "tramo": "4",
       "peso": "15%",
-      "regla": "Cierre semanal por debajo de la media de 200 semanas y, la semana siguiente, cierre por encima"
+      "regla": "Se activa con la primera de estas dos: (a) cierre semanal por debajo de la media de 200 semanas y, la semana siguiente, cierre por encima; (b) 4 o más de las 7 señales de suelo alineadas"
     },
     "salida": [
       {
         "tramo": "1",
         "precio": 100000,
-        "peso": "20%"
+        "peso": "30%"
       },
       {
         "tramo": "2",
         "precio": 110000,
-        "peso": "25%"
-      },
-      {
-        "tramo": "3",
-        "precio": 120000,
-        "peso": "25%"
+        "peso": "30%"
       }
     ],
-    "nucleo": "30%",
+    "nucleo": "40%",
     "invalidacion_arriba": 87146,
     "invalidacion_abajo_nota": "Cierre semanal por debajo del precio realizado (se toma el valor actual)"
   },
@@ -100,5 +95,7 @@
     ],
     "aviso": "Desbloqueo de unos 14,2 M de HYPE el 29/11/2026: no ejecutar el tramo 1 antes de verlo"
   },
-  "regla_altcoins": "Cada tramo de SOL y HYPE se activa cuando BTC toca su tramo siguiente: tramo 1 con el tramo 2 de BTC, tramo 2 con el tramo 3 de BTC, tramo 3 con la confirmación de suelo (tramo 4 de BTC). Activado: compra a mercado si la altcoin está en su zona o por debajo; si está por encima, orden limitada en la zona. Si se confirma el suelo de BTC o llega la fecha límite, se ejecutan todos los tramos pendientes."
+  "regla_altcoins": "Cada tramo de SOL y HYPE se activa cuando BTC toca su tramo siguiente: tramo 1 con el tramo 2 de BTC, tramo 2 con el tramo 3 de BTC, tramo 3 con la confirmación de suelo (tramo 4 de BTC). Activado: compra a mercado si la altcoin está en su zona o por debajo; si está por encima, orden limitada en la zona. Si se confirma el suelo de BTC o llega la fecha límite, se ejecutan todos los tramos pendientes.",
+  "regla_techo": "Si se alinean 3 o más de las 6 señales de techo, se vende el siguiente tramo pendiente aunque no haya llegado a su precio.",
+  "salida_altcoins": "Al doblar el precio medio de compra (x2) se vende la mitad: se recupera lo invertido y el resto queda expuesto."
 }
