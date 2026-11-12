@@ -493,9 +493,9 @@ def main():
             suelo_confirmado = True
     fecha_limite_pasada = HOY.date() > date.fromisoformat(plan["fecha_limite_compras"])
     disparadores = [
-        (min_btc_plan is not None and min_btc_plan <= t2_btc["max"], f"el tramo 2 de BTC ({miles(t2_btc['min'])}–{miles(t2_btc['max'])} $)"),
-        (min_btc_plan is not None and min_btc_plan <= t3_btc["max"], f"el tramo 3 de BTC ({miles(t3_btc['min'])}–{miles(t3_btc['max'])} $)"),
-        (suelo_confirmado, "la confirmación de suelo de BTC (tramo 4)"),
+        (min_btc_plan is not None and min_btc_plan <= t2_btc["max"], f"su tramo 2 ({miles(t2_btc['min'])}–{miles(t2_btc['max'])} $)"),
+        (min_btc_plan is not None and min_btc_plan <= t3_btc["max"], f"su tramo 3 ({miles(t3_btc['min'])}–{miles(t3_btc['max'])} $)"),
+        (suelo_confirmado, "su confirmación de suelo (tramo 4)"),
     ]
     precios_alt = {"sol": p_sol, "hype": p_hype}
     for nombre in ("sol", "hype"):
