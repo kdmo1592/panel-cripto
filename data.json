@@ -1,21 +1,21 @@
 {
- "actualizado": "2026-11-12 15:14 UTC",
+ "actualizado": "2026-11-13 14:34 UTC",
  "precios": {
-  "BTC": 71418.58,
-  "SOL": 80.8,
-  "HYPE": 70.438
+  "BTC": 69275.18,
+  "SOL": 81.51,
+  "HYPE": 74.421
  },
  "cambios_7d": {
-  "BTC": -0.061368801733676426,
-  "SOL": -0.09548863763573268,
-  "HYPE": -0.08034781700438687
+  "BTC": -0.08660961974579406,
+  "SOL": -0.09563963164318201,
+  "HYPE": -0.051828918701983695
  },
  "niveles": {
   "mm200": 67760.4812,
-  "sth": 75910.86,
-  "sth_fecha": "2026-11-05",
-  "rp": 53947.12,
-  "rp_fecha": "2026-11-05",
+  "sth": 75831.37,
+  "sth_fecha": "2026-11-06",
+  "rp": 53904.62,
+  "rp_fecha": "2026-11-06",
   "cierre_semanal": 74851.44,
   "fin_semana": "2026-11-08"
  },
@@ -23,7 +23,7 @@
   {
    "clave": "mm200",
    "nombre": "Precio / media de 200 semanas",
-   "valor": 1.0539857264177752,
+   "valor": 1.0223537196486143,
    "formato": "x",
    "color": "verde",
    "detalle": "Media de 200 semanas: 67.760 $",
@@ -33,37 +33,37 @@
   {
    "clave": "sth",
    "nombre": "Precio / coste de compradores recientes (STH)",
-   "valor": 0.9408216426477055,
+   "valor": 0.9135425088588007,
    "formato": "x",
    "color": "ambar",
-   "detalle": "Coste STH: 75.911 $",
+   "detalle": "Coste STH: 75.831 $",
    "fuente": "https://charts.bgeometrics.com/sth_realized_price.html",
-   "fecha": "2026-11-05"
+   "fecha": "2026-11-06"
   },
   {
    "clave": "mvrvz",
    "nombre": "MVRV Z-Score",
-   "valor": 0.7153,
+   "valor": 0.7132,
    "formato": "n2",
    "color": "ambar",
    "detalle": "Dato con retraso (plan gratuito)",
    "fuente": "https://charts.bgeometrics.com/mvrv_zscore.html",
-   "fecha": "2026-11-05"
+   "fecha": "2026-11-06"
   },
   {
    "clave": "fng",
    "nombre": "Miedo y codicia",
-   "valor": 28,
+   "valor": 20,
    "formato": "n0",
-   "color": "ambar",
-   "detalle": "Fear · hace 7 días: 50",
+   "color": "verde",
+   "detalle": "Extreme Fear · hace 7 días: 28",
    "fuente": "https://alternative.me/crypto/fear-and-greed-index/",
    "fecha": null
   },
   {
    "clave": "funding",
    "nombre": "Funding de BTC (anualizado, Hyperliquid)",
-   "valor": 0.0651744,
+   "valor": 0.10950000000000001,
    "formato": "pct",
    "color": "ambar",
    "detalle": "Base neutral en Hyperliquid ≈ 11% anual. Muy por encima: exceso de apalancamiento comprador",
@@ -73,17 +73,17 @@
   {
    "clave": "mayer",
    "nombre": "Múltiplo de Mayer (precio / media de 200 días)",
-   "valor": 0.976508626646265,
+   "valor": 0.9477237226512987,
    "formato": "x",
    "color": "ambar",
-   "detalle": "Media de 200 días: 73.137 $",
+   "detalle": "Media de 200 días: 73.096 $",
    "fuente": "https://data-api.binance.vision",
    "fecha": null
   },
   {
    "clave": "dd",
    "nombre": "Caída desde el máximo histórico",
-   "valor": -0.4340824929518414,
+   "valor": -0.4510666948865065,
    "formato": "pct",
    "color": "ambar",
    "detalle": "Máximo: 126.200 $. Suelos de mercados bajistas anteriores: entre −77% y −84%",
@@ -95,12 +95,12 @@
   {
    "clave": "liquidez",
    "nombre": "Liquidez neta de la Fed (cambio en 13 semanas)",
-   "valor": -0.008364966531058005,
+   "valor": 0.008466372634281738,
    "formato": "pct",
    "color": "ambar",
-   "detalle": "Nivel: 5,79 billones $",
+   "detalle": "Nivel: 5,84 billones $",
    "fuente": "https://fred.stlouisfed.org/series/WALCL",
-   "fecha": "2026-11-04"
+   "fecha": "2026-11-11"
   },
   {
    "clave": "m2",
@@ -115,7 +115,7 @@
   {
    "clave": "dom",
    "nombre": "Dominancia de BTC",
-   "valor": 0.5951614913771422,
+   "valor": 0.5889351032834256,
    "formato": "pct1",
    "color": "ambar",
    "detalle": "Contexto: si sube, el dinero se refugia en BTC y las altcoins sufren",
@@ -125,7 +125,7 @@
   {
    "clave": "solbtc",
    "nombre": "SOL frente a BTC (30 días)",
-   "valor": -0.11921805991219525,
+   "valor": -0.07845408369878437,
    "formato": "pct",
    "color": "rojo",
    "detalle": "Positivo = SOL mejor que BTC; negativo = peor",
@@ -135,9 +135,9 @@
   {
    "clave": "hypebtc",
    "nombre": "HYPE frente a BTC (30 días)",
-   "valor": 0.006245077857965242,
+   "valor": 0.086182430487034,
    "formato": "pct",
-   "color": "ambar",
+   "color": "verde",
    "detalle": "Positivo = HYPE mejor que BTC; negativo = peor",
    "fuente": "https://app.hyperliquid.xyz",
    "fecha": null
@@ -145,32 +145,32 @@
   {
    "clave": "inghype",
    "nombre": "Ingresos de Hyperliquid (30 días vs 30 anteriores)",
-   "valor": -0.031308974272540646,
+   "valor": -0.04155694449515124,
    "formato": "pct",
    "color": "ambar",
-   "detalle": "Últimos 30 días: 68,8 M$",
+   "detalle": "Últimos 30 días: 68,7 M$",
    "fuente": "https://defillama.com/protocol/hyperliquid",
    "fecha": null
   },
   {
    "clave": "stables",
    "nombre": "Stablecoins en circulación (cambio en 30 días)",
-   "valor": -0.04893477037840743,
+   "valor": -0.053347372459347175,
    "formato": "pct",
    "color": "rojo",
-   "detalle": "Total: 289 mil M$",
+   "detalle": "Total: 288 mil M$",
    "fuente": "https://defillama.com/stablecoins",
    "fecha": null
   },
   {
    "clave": "nasdaq",
    "nombre": "Nasdaq / su media de 200 sesiones",
-   "valor": 1.0136760077737057,
+   "valor": 1.0093884752880853,
    "formato": "x",
    "color": "ambar",
-   "detalle": "A -7,7% de su máximo desde 2025",
+   "detalle": "A -8,1% de su máximo desde 2025",
    "fuente": "https://fred.stlouisfed.org/series/NASDAQCOM",
-   "fecha": "2026-11-11"
+   "fecha": "2026-11-12"
   }
  ],
  "plan": {
@@ -281,8 +281,8 @@
     "min": 68000,
     "max": 70000,
     "peso": "30%",
-    "estado": "por encima",
-    "distancia": -0.019862898422231323
+    "estado": "EN ZONA",
+    "distancia": 0
    },
    {
     "tramo": "2",
@@ -290,7 +290,7 @@
     "max": 65000,
     "peso": "30%",
     "estado": "por encima",
-    "distancia": -0.08987269139207199
+    "distancia": -0.06171301178863764
    },
    {
     "tramo": "3",
@@ -298,7 +298,7 @@
     "max": 60000,
     "peso": "25%",
     "estado": "por encima",
-    "distancia": -0.15988248436191255
+    "distancia": -0.13388893395874246
    }
   ],
   "sol": [
@@ -309,7 +309,7 @@
     "peso": "1/3",
     "activa_con": "BTC tramo 2",
     "estado": "por debajo",
-    "distancia": 0.051980198019802026,
+    "distancia": 0.04281683229051647,
     "activado": false
    },
    {
@@ -319,7 +319,7 @@
     "peso": "1/3",
     "activa_con": "BTC tramo 3",
     "estado": "por encima",
-    "distancia": -0.03465346534653457,
+    "distancia": -0.04306220095693791,
     "activado": false
    },
    {
@@ -329,7 +329,7 @@
     "peso": "1/3",
     "activa_con": "Suelo BTC (tramo 4)",
     "estado": "por encima",
-    "distancia": -0.1955445544554455,
+    "distancia": -0.2025518341307816,
     "activado": false
    }
   ],
@@ -351,7 +351,7 @@
     "peso": "1/3",
     "activa_con": "BTC tramo 3",
     "estado": "por encima",
-    "distancia": -0.07720264629887275,
+    "distancia": -0.12659061286464846,
     "activado": false
    },
    {
@@ -361,7 +361,7 @@
     "peso": "1/3",
     "activa_con": "Suelo BTC (tramo 4)",
     "estado": "por encima",
-    "distancia": -0.2191714699452001,
+    "distancia": -0.26096128780854877,
     "activado": false
    }
   ],
@@ -370,19 +370,23 @@
     "tramo": "1",
     "precio": 100000,
     "peso": "30%",
-    "distancia": 0.40019585939681246,
+    "distancia": 0.443518443402096,
     "estado": "pendiente"
    },
    {
     "tramo": "2",
     "precio": 110000,
     "peso": "30%",
-    "distancia": 0.5402154453364936,
+    "distancia": 0.5878702877423057,
     "estado": "pendiente"
    }
   ]
  },
  "senales": [
+  {
+   "tipo": "compra",
+   "texto": "BTC tramo 1 (68.000–70.000 $): el precio está en la zona o por debajo. Compra según el plan."
+  },
   {
    "tipo": "aviso",
    "texto": "SOL está en la zona de su tramo 1 o por debajo, pero el tramo no se activa hasta que BTC toque su tramo 2 (62.000–65.000 $). Según el plan, espera."
@@ -393,7 +397,7 @@
   },
   {
    "tipo": "info",
-   "texto": "Regla de tiempo: quedan 139 días hasta el 2027-03-31 para ejecutar los tramos de compra pendientes."
+   "texto": "Regla de tiempo: quedan 138 días hasta el 2027-03-31 para ejecutar los tramos de compra pendientes."
   }
  ],
  "grafico": [
@@ -2165,8 +2169,8 @@
    "t": "2026-11-08",
    "c": 74851,
    "mm200": 67760,
-   "sth": 75911,
-   "rp": 53947
+   "sth": 75831,
+   "rp": 53905
   }
  ],
  "capitulacion": [
@@ -2189,7 +2193,7 @@
   {
    "clave": "mvrvz_cap",
    "nombre": "MVRV Z-Score",
-   "valor": 0.7153,
+   "valor": 0.7132,
    "formato": "n2",
    "cumple": false,
    "umbral": "≤ 0 (mercado en pérdidas)"
@@ -2197,7 +2201,7 @@
   {
    "clave": "rp_cap",
    "nombre": "Precio / precio realizado",
-   "valor": 1.3238627011043407,
+   "valor": 1.2851436481696743,
    "formato": "x",
    "cumple": false,
    "umbral": "≤ 1,05× (toca el coste medio de todo el mercado)"
@@ -2205,7 +2209,7 @@
   {
    "clave": "sthb_cap",
    "nombre": "Precio / coste STH frente a su banda de 90 días",
-   "valor": 0.9408216426477055,
+   "valor": 0.9135425088588007,
    "formato": "x",
    "cumple": true,
    "umbral": "< 1,03× (media de 90 días menos una desviación)"
@@ -2213,7 +2217,7 @@
   {
    "clave": "mayer_cap",
    "nombre": "Múltiplo de Mayer (precio / media de 200 días)",
-   "valor": 0.976508626646265,
+   "valor": 0.9477237226512987,
    "formato": "x",
    "cumple": false,
    "umbral": "≤ 0,80×"
@@ -2221,9 +2225,9 @@
   {
    "clave": "fng_cap",
    "nombre": "Miedo y codicia",
-   "valor": 28,
+   "valor": 20,
    "formato": "n0",
-   "cumple": false,
+   "cumple": true,
    "umbral": "≤ 20 (miedo extremo)"
   }
  ],
@@ -2231,7 +2235,7 @@
   {
    "clave": "mayer_t",
    "nombre": "Múltiplo de Mayer",
-   "valor": 0.976508626646265,
+   "valor": 0.9477237226512987,
    "formato": "x",
    "cumple": false,
    "umbral": "≥ 2,40×"
@@ -2239,7 +2243,7 @@
   {
    "clave": "pi_t",
    "nombre": "Pi Cycle (media de 111 días / 2 × media de 350 días)",
-   "valor": 0.5053078169482705,
+   "valor": 0.5060150296739956,
    "formato": "x",
    "cumple": false,
    "umbral": "≥ 1,00× (cruce)"
@@ -2247,7 +2251,7 @@
   {
    "clave": "mvrvz_t",
    "nombre": "MVRV Z-Score",
-   "valor": 0.7153,
+   "valor": 0.7132,
    "formato": "n2",
    "cumple": false,
    "umbral": "≥ 3"
@@ -2255,7 +2259,7 @@
   {
    "clave": "mm200_t",
    "nombre": "Precio / media de 200 semanas",
-   "valor": 1.0539857264177752,
+   "valor": 1.0223537196486143,
    "formato": "x",
    "cumple": false,
    "umbral": "≥ 2,00×"
@@ -2263,7 +2267,7 @@
   {
    "clave": "fng_t",
    "nombre": "Miedo y codicia",
-   "valor": 28,
+   "valor": 20,
    "formato": "n0",
    "cumple": false,
    "umbral": "≥ 80 (codicia extrema)"
@@ -2271,7 +2275,7 @@
   {
    "clave": "fund_t",
    "nombre": "Funding de BTC (anualizado)",
-   "valor": 0.0651744,
+   "valor": 0.10950000000000001,
    "formato": "pct",
    "cumple": false,
    "umbral": "≥ 30 %"
@@ -2282,42 +2286,36 @@
  "rotacion": [
   {
    "activo": "ETH",
-   "precio": 2000.21,
-   "cambio_7d": -0.106255110566977,
-   "minimo": 1983.82,
-   "fecha_minimo": "2026-11-12",
-   "rebote": 0.008261838271617528,
-   "objetivo_rebote": 2975.73,
-   "vs_btc_30d": -0.06751442596077839
+   "precio": 1966.01,
+   "cambio_7d": -0.12179553038187851,
+   "minimo": 1895.95,
+   "fecha_minimo": "2026-11-13",
+   "rebote": 0.03695245127772351,
+   "objetivo_rebote": 2843.925,
+   "vs_btc_30d": -0.04273524792039607
   },
   {
    "activo": "LINK",
-   "precio": 9.848,
-   "cambio_7d": -0.07764353282757319,
-   "minimo": 9.77,
-   "fecha_minimo": "2026-11-12",
-   "rebote": 0.007983623336745183,
-   "objetivo_rebote": 14.655,
-   "vs_btc_30d": -0.10988198144338046
+   "precio": 10.11,
+   "cambio_7d": -0.06906077348066297,
+   "minimo": 9.623,
+   "fecha_minimo": "2026-11-13",
+   "rebote": 0.05060791852852553,
+   "objetivo_rebote": 14.4345,
+   "vs_btc_30d": -0.041363150009046
   },
   {
    "activo": "XRP",
-   "precio": 1.0209,
-   "cambio_7d": -0.15432405566600405,
-   "minimo": 1.0193,
-   "fecha_minimo": "2026-11-12",
-   "rebote": 0.001569704699303287,
-   "objetivo_rebote": 1.52895,
-   "vs_btc_30d": -0.1297360748168941
+   "precio": 1.0339,
+   "cambio_7d": -0.12307039864291769,
+   "minimo": 0.9975,
+   "fecha_minimo": "2026-11-13",
+   "rebote": 0.03649122807017546,
+   "objetivo_rebote": 1.49625,
+   "vs_btc_30d": -0.08451021650681301
   }
  ],
  "diario_btc": [
-  [
-   "2025-10-09",
-   123763,
-   119651,
-   121662
-  ],
   [
    "2025-10-10",
    122550,
@@ -4709,8 +4707,14 @@
   [
    "2026-11-12",
    74217,
-   71255,
-   71419
+   71113,
+   71460
+  ],
+  [
+   "2026-11-13",
+   71514,
+   67568,
+   69275
   ]
  ],
  "historial": [
@@ -4741,18 +4745,18 @@
   {
    "semana": "2026-11-08",
    "btc": 74851.44,
-   "sol": 80.8,
-   "hype": 70.438,
+   "sol": 81.51,
+   "hype": 74.421,
    "mm200": 67760.4812,
-   "sth": 75910.86,
-   "mvrvz": 0.7153,
-   "fng": 28,
-   "dom": 59.51614913771422,
+   "sth": 75831.37,
+   "mvrvz": 0.7132,
+   "fng": 20,
+   "dom": 58.89351032834256,
    "colores": {
     "mm200": "verde",
     "sth": "ambar",
     "mvrvz": "ambar",
-    "fng": "ambar",
+    "fng": "verde",
     "funding": "ambar",
     "mayer": "ambar",
     "dd": "ambar",
@@ -4760,7 +4764,7 @@
     "m2": "ambar",
     "dom": "ambar",
     "solbtc": "rojo",
-    "hypebtc": "ambar",
+    "hypebtc": "verde",
     "inghype": "ambar",
     "stables": "rojo",
     "nasdaq": "ambar"
