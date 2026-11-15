@@ -570,9 +570,15 @@ def main():
             precio = {"btc": p_btc, "sol": p_sol, "hype": p_hype}[nombre]
             posiciones[nombre] = {"desplegado": w, "medio": med, "x2": 2 * med,
                                   "resultado": precio / med - 1 if precio else None}
+    velas_plan = [v for v in (btc_d or []) if v["t"] >= plan["inicio_plan"]]
     for t in plan_estado["btc"]:
-        if not t.get("ejecutado") and p_btc and p_btc <= t["max"]:
+        if t.get("ejecutado") or not p_btc:
+            continue
+        toque = next((v["t"] for v in velas_plan if v["l"] <= t["max"]), None)
+        if p_btc <= t["max"]:
             senales.append({"tipo": "compra", "texto": f"BTC tramo {t['tramo']} ({miles(t['min'])}–{miles(t['max'])} $): el precio está en la zona o por debajo. Compra según el plan."})
+        elif toque:
+            senales.append({"tipo": "compra", "texto": f"BTC tramo {t['tramo']} ({miles(t['min'])}–{miles(t['max'])} $): el precio entró en la zona el {toque} y ahora está por encima. Si tenías una orden limitada, se habrá ejecutado: márcala en plan.json. Si no, déjala puesta en la zona."})
     for nombre in ("sol", "hype"):
         pos = posiciones.get(nombre)
         precio = {"sol": p_sol, "hype": p_hype}[nombre]
@@ -630,7 +636,10 @@ def main():
             precio = precios_alt[nombre]
             if precio is None or t.get("ejecutado"):
                 continue
-            if activo:
+            espera = t.get("no_antes_de")
+            if activo and espera and HOY.date().isoformat() < espera:
+                senales.append({"tipo": "aviso", "texto": f"{nombre.upper()} tramo {t['tramo']} activado, pero el plan pide no comprarlo antes del {espera} ({plan[nombre].get('aviso', 'condición del plan')})."})
+            elif activo:
                 if precio <= t["max"]:
                     senales.append({"tipo": "compra", "texto": f"{nombre.upper()} tramo {t['tramo']} ACTIVADO y el precio está en su zona o por debajo: compra a mercado según el plan."})
                 else:
