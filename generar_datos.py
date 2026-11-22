@@ -411,6 +411,7 @@ def main():
 
     # --- señales de suelo: las de Plan BTC calculables gratis + tres añadidas
     rsi_sem = rsi(cierres_w) if len(cierres_w) > 15 else None
+    rsi_dia = rsi([v["c"] for v in (btc_d or [])]) if btc_d and len(btc_d) > 15 else None
     vols_w = [x.get("v") for x in semanas if x.get("v") is not None]
     vol_ratio = (vols_w[-1] / (sum(vols_w[-21:-1]) / 20)) if len(vols_w) >= 21 else None
     rp_ratio = p_btc / rp_v if p_btc and rp_v else None
@@ -499,6 +500,10 @@ def main():
             semaforo(fng["valor"] if fng else None, 25, 75),
             (f"{fng['texto']} · hace 7 días: {fng['hace_7d']}" if fng else "sin dato"),
             "https://alternative.me/crypto/fear-and-greed-index/"),
+        ind("rsi_dia", "RSI diario de BTC", rsi_dia, "n0",
+            semaforo(rsi_dia, 30, 70),
+            "Informativo: no cuenta para la confluencia de suelo, que usa el RSI semanal",
+            "https://data-api.binance.vision"),
         ind("funding", "Funding de BTC (anualizado, Hyperliquid)", f_btc, "pct",
             semaforo(f_btc, 0.05, 0.30),
             "Base neutral en Hyperliquid ≈ 11% anual. Muy por encima: exceso de apalancamiento comprador",

@@ -132,7 +132,7 @@
     </ul>
 
     <h3>8. Histórico semanal</h3>
-    <p>Una fila por semana, con los semáforos como puntos de color en el orden de las tarjetas (7 de valoración y luego 8 de viento de fondo). Sirve para ver la <b>tendencia</b>, por ejemplo si poco a poco se van poniendo en verde.</p>
+    <p>Una fila por semana, con los semáforos como puntos de color en el orden de las tarjetas (8 de valoración y luego 8 de viento de fondo). Sirve para ver la <b>tendencia</b>, por ejemplo si poco a poco se van poniendo en verde.</p>
 
     <h3>Si algo falla</h3>
     <p>Si una fuente no responde, al final aparece en rojo y esa tarjeta muestra «sin dato»; se reintenta al día siguiente. Para datos al momento: en el repositorio, <b>Actions → Actualizar panel → Run workflow</b>.</p>
@@ -165,6 +165,7 @@ const AYUDA = {
   dom:"Porcentaje del valor total del mercado cripto que es BTC. Si sube, el dinero se refugia en BTC y las altcoins lo hacen peor. Si baja con fuerza, suele ser fase de euforia en altcoins. Siempre en neutral: es contexto, no señal.",
   solbtc:"Rendimiento de SOL frente a BTC en 30 días. Si SOL cae más que BTC en las caídas, sus tramos de compra llegarán antes. Verde ≥ +5 % · Rojo ≤ −5 %.",
   hypebtc:"Rendimiento de HYPE frente a BTC en 30 días. Verde ≥ +5 % · Rojo ≤ −5 %.",
+  rsi_dia:"Fuerza relativa del precio en las últimas 14 sesiones diarias. Por debajo de 30 es sobreventa: el movimiento está agotado a corto plazo. Es la lectura que usan casi todos los analistas en vídeo, Plan BTC incluido. El panel la muestra aparte porque la confluencia de suelo usa el RSI SEMANAL, mucho más lento y más fiable: el diario entra en sobreventa varias veces al año, el semanal casi nunca. Verde ≤ 30 · Rojo ≥ 70.",
   mayer:"Precio dividido por su media de 200 días. Es de las métricas con historial más largo y limpio: por debajo de 0,8× ha estado menos del 15 % del tiempo y ha coincidido con zonas de suelo; por encima de 2,4×, con techos. Verde ≤ 0,8× · Rojo ≥ 2,4×.",
   dd:"Cuánto ha caído el precio desde su máximo histórico. Da perspectiva: los mercados bajistas anteriores tocaron fondo entre −77 % y −84 %, aunque cada ciclo ha sido menos profundo. Verde ≤ −50 % · Rojo ≥ −15 %.",
   stables:"Dinero en stablecoins (USDT, USDC…): es la pólvora seca que puede entrar a comprar. Si crece, hay capital nuevo llegando al mercado; si se contrae, está saliendo. Verde ≥ +2 % · Rojo ≤ −1 % en 30 días.",
@@ -259,7 +260,7 @@ function render(d){
         <div class="graf"><canvas id="graf"></canvas></div>`;
 
   // --- Histórico
-  const claves = ["mm200","sth","mvrvz","fng","funding","mayer","dd","liquidez","m2","dom","solbtc","hypebtc","inghype","stables","nasdaq"];
+  const claves = ["mm200","sth","mvrvz","fng","rsi_dia","funding","mayer","dd","liquidez","m2","dom","solbtc","hypebtc","inghype","stables","nasdaq"];
   const hist = [...d.historial].reverse().slice(0,26).map(r=>`<tr><td>${r.semana}</td><td class="num">${fmt.usd(r.btc)}</td><td class="num">${fmt.usd(r.sol,2)}</td><td class="num">${fmt.usd(r.hype,2)}</td><td class="num">${fmt.usd(r.sth)}</td><td class="num">${fmt.n0(r.fng)}</td><td>${claves.map(k=>`<span class="punto ${(r.colores||{})[k]||"gris"}" title="${k}"></span>`).join("")}</td></tr>`).join("");
   h += `<h2>Histórico semanal</h2><div class="leyenda">Una fila por semana cerrada (domingo). Los puntos son los semáforos, en el orden de las tarjetas.</div>
         <table class="hist"><thead><tr><th>Semana</th><th class="num">BTC</th><th class="num">SOL</th><th class="num">HYPE</th><th class="num">Coste STH</th><th class="num">Miedo/codicia</th><th>Semáforos</th></tr></thead><tbody>${hist}</tbody></table>`;
