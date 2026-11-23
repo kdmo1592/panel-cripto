@@ -97,6 +97,21 @@ def velas_binance(simbolo, intervalo, limite=1000):
              "l": float(k[3]), "c": float(k[4]), "v": float(k[5])} for k in r.json()]
 
 
+@fuente("Binance precio al contado")
+def precio_binance(simbolo):
+    r = get("https://data-api.binance.vision/api/v3/ticker/price", params={"symbol": simbolo})
+    return float(r.json()["price"])
+
+
+@fuente("Kraken precio al contado (alternativa)")
+def precio_kraken(par):
+    r = get("https://api.kraken.com/0/public/Ticker", params={"pair": par})
+    d = r.json()
+    if d.get("error"):
+        raise ValueError(d["error"])
+    return float(next(iter(d["result"].values()))["c"][0])
+
+
 @fuente("Kraken velas (alternativa)")
 def velas_kraken(par, minutos):
     """Alternativa si Binance no responde. Kraken da como máximo 720 velas."""
@@ -331,12 +346,20 @@ def main():
     dom = dominancia()
     ing_hype = ingresos_hyperliquid()
     stables = stablecoins()
-    eurusd_serie = serie_fred("DEXUSEU", desde="2026-01-01")
-    eurusd = eurusd_serie[-1][1] if eurusd_serie else None
     nasdaq = serie_fred("NASDAQCOM", desde="2025-01-01")
 
     # --- precios
     p_btc = btc_d[-1]["c"] if btc_d else (fund.get("BTC") or {}).get("precio")
+
+    # BTC/EUR directo del mercado: evita depender del tipo de cambio, que llega con retraso
+    btc_eur = precio_binance("BTCEUR") or precio_kraken("XBTEUR")
+    eurusd = (p_btc / btc_eur) if (p_btc and btc_eur) else None
+    eurusd_fuente = "implícito en BTC/USDT ÷ BTC/EUR (Binance)" if eurusd else None
+    if eurusd is None:
+        serie_fx = serie_fred("DEXUSEU", desde="2026-01-01")
+        if serie_fx:
+            eurusd = serie_fx[-1][1]
+            eurusd_fuente = f"Reserva Federal, {serie_fx[-1][0]}"
     p_sol = sol_d[-1]["c"] if sol_d else (fund.get("SOL") or {}).get("precio")
     p_hype = hype_d[-1]["c"] if hype_d else (fund.get("HYPE") or {}).get("precio")
 
@@ -576,7 +599,10 @@ def main():
         btc_por_unidad = sum(peso_num(c["peso"]) / c["precio_eur"] for c in compras)
         medio_eur = w / btc_por_unidad
         precio_usd = {"btc": p_btc, "sol": p_sol, "hype": p_hype}[nombre]
-        precio_eur = precio_usd / eurusd if precio_usd and eurusd else None
+        if nombre == "btc" and btc_eur:
+            precio_eur = btc_eur
+        else:
+            precio_eur = precio_usd / eurusd if precio_usd and eurusd else None
         posiciones[nombre] = {
             "desplegado": w,
             "medio_eur": medio_eur,
@@ -713,7 +739,8 @@ def main():
         "posiciones": posiciones,
         "confluencia_suelo": conf_fecha,
         "eurusd": eurusd,
-        "eurusd_fecha": eurusd_serie[-1][0] if eurusd_serie else None,
+        "eurusd_fuente": eurusd_fuente,
+        "btc_eur": btc_eur,
         "rotacion": rotacion,
         "diario_btc": [[v["t"], round(v["h"]), round(v["l"]), round(v["c"])] for v in (btc_d or [])[-400:]],
         "historial": historial,

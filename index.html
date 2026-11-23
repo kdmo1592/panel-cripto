@@ -117,7 +117,7 @@
     <p>El <b>parte de situación</b>, arriba del plan, resume ambas cuentas y tus posiciones.</p>
     <h3>Cómo marcar una compra</h3>
     <p>En el repositorio, edita <code>plan.json</code> y añade una entrada a <code>compras</code> del activo: <code>{"precio_eur": 51750, "peso": "14.3%", "fecha": "2026-11-21"}</code>. El precio es el que pagaste por 1 BTC en euros y el peso es el porcentaje del presupuesto de ese activo que usaste. Con eso el panel calcula tu precio medio exacto, el resultado y el x2. <b>No pongas nunca importes en euros:</b> el repositorio es público, y con el precio y el porcentaje basta.</p>
-    <p>Las zonas del plan están en dólares porque es la referencia de todos los análisis; tus compras van en euros. El panel convierte con el tipo de cambio oficial de la Reserva Federal, así que ves las dos cifras sin tener que calcular nada.</p>
+    <p>Las zonas del plan están en dólares porque es la referencia de todos los análisis; tus compras van en euros. El panel toma el precio BTC/EUR directamente del mercado, así que tu resultado en euros es exacto y no depende de ningún tipo de cambio con retraso; el equivalente en dólares se calcula con el cambio implícito entre los dos precios de BTC.</p>
 
     <h3>6. ETH, LINK y XRP</h3>
     <p><b>Mínimo desde el inicio</b>: el precio más bajo desde que empezó el plan. <b>Precio para vender 1/3</b>: ese mínimo + 50%. Baja mientras la moneda siga marcando mínimos nuevos y se queda fijo cuando deja de caer. Tu precio medio de compra no aparece porque el repositorio es público; está en el documento del plan.</p>
@@ -220,7 +220,7 @@ function render(d){
       const dec = k==="btc"?0:2;
       return `${k.toUpperCase()}: ${fmt.pct1(q.desplegado)} del presupuesto · precio medio ${eur(q.medio_eur,dec)} (${fmt.usd(q.medio_usd,dec)}) · ahora ${eur(q.precio_eur,dec)} · <b class="${q.resultado>=0?'sube':'baja'}">${fmt.pct(q.resultado)}</b>${k!=="btc"?` · x2 en ${eur(q.x2_eur,dec)}`:""}`;
     }).join("<br>");
-    h += `<div class="senal info"><b>Parte de situación.</b> Señales de suelo: <b>${ns} de ${d.capitulacion.length}</b> (el tramo 4 se activa con 4) · Señales de techo: <b>${nt} de ${d.techo.length}</b> (con 3 se vende el siguiente tramo).<br>${lin}${d.eurusd?`<br><span class="mut">Precios de compra en euros. Conversión con EUR/USD ${d.eurusd.toFixed(4).replace(".",",")} (${d.eurusd_fecha}, Reserva Federal).</span>`:""}</div>`;
+    h += `<div class="senal info"><b>Parte de situación.</b> Señales de suelo: <b>${ns} de ${d.capitulacion.length}</b> (el tramo 4 se activa con 4) · Señales de techo: <b>${nt} de ${d.techo.length}</b> (con 3 se vende el siguiente tramo).<br>${lin}${d.eurusd?`<br><span class="mut">Compras en euros. BTC/EUR del mercado; equivalencia en dólares con EUR/USD ${d.eurusd.toFixed(4).replace(".",",")} (${d.eurusd_fuente}).</span>`:""}</div>`;
   }
   h += d.senales.map(s=>`<div class="senal ${s.tipo}">${s.texto}</div>`).join("");
   h += `<div class="tablas">${tablaEntrada("Compra BTC", PE.btc, 0)}`;
