@@ -331,6 +331,8 @@ def main():
     dom = dominancia()
     ing_hype = ingresos_hyperliquid()
     stables = stablecoins()
+    eurusd_serie = serie_fred("DEXUSEU", desde="2026-01-01")
+    eurusd = eurusd_serie[-1][1] if eurusd_serie else None
     nasdaq = serie_fred("NASDAQCOM", desde="2025-01-01")
 
     # --- precios
@@ -564,30 +566,39 @@ def main():
         plan_estado["salida_btc"].append({**t, "distancia": d,
                                           "estado": "ALCANZADO" if d is not None and d <= 0 else "pendiente"})
 
-    # --- posiciones: tramos marcados como ejecutados en plan.json
+    # --- posiciones reales, a partir de "compras" en plan.json (precios en €/BTC)
     posiciones = {}
     for nombre in ("btc", "sol", "hype"):
-        tramos = list(plan[nombre]["entrada"]) + ([plan["btc"]["reserva"]] if nombre == "btc" else [])
-        ej = [t for t in tramos if t.get("ejecutado")]
-        w = sum(peso_num(t["peso"]) for t in ej)
-        if ej and w:
-            med = sum(peso_num(t["peso"]) * t["ejecutado"]["precio"] for t in ej) / w
-            precio = {"btc": p_btc, "sol": p_sol, "hype": p_hype}[nombre]
-            posiciones[nombre] = {"desplegado": w, "medio": med, "x2": 2 * med,
-                                  "resultado": precio / med - 1 if precio else None}
+        compras = plan[nombre].get("compras") or []
+        w = sum(peso_num(c["peso"]) for c in compras)
+        if not (compras and w):
+            continue
+        btc_por_unidad = sum(peso_num(c["peso"]) / c["precio_eur"] for c in compras)
+        medio_eur = w / btc_por_unidad
+        precio_usd = {"btc": p_btc, "sol": p_sol, "hype": p_hype}[nombre]
+        precio_eur = precio_usd / eurusd if precio_usd and eurusd else None
+        posiciones[nombre] = {
+            "desplegado": w,
+            "medio_eur": medio_eur,
+            "medio_usd": medio_eur * eurusd if eurusd else None,
+            "x2_eur": 2 * medio_eur,
+            "precio_eur": precio_eur,
+            "resultado": precio_eur / medio_eur - 1 if precio_eur else None,
+            "compras": len(compras),
+        }
     velas_plan = [v for v in (btc_d or []) if v["t"] >= plan["inicio_plan"]]
     for t in plan_estado["btc"]:
-        if t.get("ejecutado") or not p_btc:
+        if not p_btc:
             continue
         toque = next((v["t"] for v in velas_plan if v["l"] <= t["max"]), None)
         if p_btc <= t["max"]:
             senales.append({"tipo": "compra", "texto": f"BTC tramo {t['tramo']} ({miles(t['min'])}–{miles(t['max'])} $): el precio está en la zona o por debajo. Compra según el plan."})
         elif toque:
-            senales.append({"tipo": "compra", "texto": f"BTC tramo {t['tramo']} ({miles(t['min'])}–{miles(t['max'])} $): el precio entró en la zona el {toque} y ahora está por encima. Si tenías una orden limitada, se habrá ejecutado: márcala en plan.json. Si no, déjala puesta en la zona."})
+            senales.append({"tipo": "compra", "texto": f"BTC tramo {t['tramo']} ({miles(t['min'])}–{miles(t['max'])} $): el precio entró en la zona el {toque} y ahora está por encima. Si tenías una orden limitada, se habrá ejecutado: anótala en plan.json. Si no, déjala puesta en la zona."})
     for nombre in ("sol", "hype"):
         pos = posiciones.get(nombre)
         precio = {"sol": p_sol, "hype": p_hype}[nombre]
-        if pos and precio and precio >= pos["x2"]:
+        if pos and precio and eurusd and precio / eurusd >= pos["x2_eur"]:
             senales.append({"tipo": "venta", "texto": f"{nombre.upper()} ha doblado tu precio medio: vende la mitad y recuperas lo invertido."})
 
     # --- confluencia de señales de suelo y de techo
@@ -701,6 +712,8 @@ def main():
         "techo": techo,
         "posiciones": posiciones,
         "confluencia_suelo": conf_fecha,
+        "eurusd": eurusd,
+        "eurusd_fecha": eurusd_serie[-1][0] if eurusd_serie else None,
         "rotacion": rotacion,
         "diario_btc": [[v["t"], round(v["h"]), round(v["l"]), round(v["c"])] for v in (btc_d or [])[-400:]],
         "historial": historial,

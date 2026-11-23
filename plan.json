@@ -1,5 +1,5 @@
 {
-  "_nota": "Niveles del plan de inversión. Sin importes: el repositorio es público. Para marcar un tramo como comprado, añádele \"ejecutado\": {\"fecha\": \"2026-11-20\", \"precio\": 69500}.",
+  "_nota": "Niveles del plan. SIN IMPORTES EN EUROS: el repositorio es público. Las compras se anotan en \"compras\" con el precio en €/BTC y el porcentaje del presupuesto de ese activo que usaron, lo que basta para calcular el precio medio exacto.",
   "inicio_plan": "2026-11-08",
   "fecha_limite_compras": "2027-03-31",
   "btc": {
@@ -42,7 +42,21 @@
     ],
     "nucleo": "40%",
     "invalidacion_arriba": 87146,
-    "invalidacion_abajo_nota": "Cierre semanal por debajo del precio realizado (se toma el valor actual)"
+    "invalidacion_abajo_nota": "Cierre semanal por debajo del precio realizado (se toma el valor actual)",
+    "compras": [
+      {
+        "precio_eur": 57488.91,
+        "peso": "21.43%",
+        "fecha": null,
+        "nota": "pendiente de fecha"
+      },
+      {
+        "precio_eur": 51750.0,
+        "peso": "14.29%",
+        "fecha": null,
+        "nota": "pendiente de fecha"
+      }
+    ]
   },
   "sol": {
     "entrada": [
@@ -67,7 +81,8 @@
         "peso": "1/3",
         "activa_con": "Suelo BTC (tramo 4)"
       }
-    ]
+    ],
+    "compras": []
   },
   "hype": {
     "entrada": [
@@ -94,9 +109,11 @@
         "activa_con": "Suelo BTC (tramo 4)"
       }
     ],
-    "aviso": "Desbloqueo de unos 14,2 M de HYPE el 29/11/2026: no ejecutar el tramo 1 antes de verlo"
+    "aviso": "Desbloqueo de unos 14,2 M de HYPE el 29/11/2026: no ejecutar el tramo 1 antes de verlo",
+    "compras": []
   },
   "regla_altcoins": "Cada tramo de SOL y HYPE se activa cuando BTC toca su tramo siguiente: tramo 1 con el tramo 2 de BTC, tramo 2 con el tramo 3 de BTC, tramo 3 con la confirmación de suelo (tramo 4 de BTC). Activado: compra a mercado si la altcoin está en su zona o por debajo; si está por encima, orden limitada en la zona. Si se confirma el suelo de BTC o llega la fecha límite, se ejecutan todos los tramos pendientes.",
   "regla_techo": "Si se alinean 3 o más de las 6 señales de techo, se vende el siguiente tramo pendiente aunque no haya llegado a su precio.",
-  "salida_altcoins": "Al doblar el precio medio de compra (x2) se vende la mitad: se recupera lo invertido y el resto queda expuesto."
+  "salida_altcoins": "Al doblar el precio medio de compra (x2) se vende la mitad: se recupera lo invertido y el resto queda expuesto.",
+  "moneda_compras": "EUR"
 }
